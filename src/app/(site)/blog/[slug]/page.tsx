@@ -17,6 +17,9 @@ export async function generateMetadata(
   return {
     title: post.title,
     description: post.excerpt ?? undefined,
+    openGraph: post.cover_image_url
+      ? { images: [{ url: post.cover_image_url }] }
+      : undefined,
   };
 }
 
@@ -34,15 +37,23 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
       </h1>
       {post.tags.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
-          {post.tags.map((tag) => (
+          {post.tags.map((tag, index) => (
             <span
-              key={tag}
+              key={`${tag}-${index}`}
               className="rounded-full bg-black/5 px-2.5 py-0.5 text-xs text-black/60"
             >
               {tag}
             </span>
           ))}
         </div>
+      )}
+      {post.cover_image_url && (
+        // eslint-disable-next-line @next/next/no-img-element -- bilde-URL kommer fra Supabase Storage, varierer per prosjekt
+        <img
+          src={post.cover_image_url}
+          alt=""
+          className="mt-8 w-full rounded-lg border border-black/10 object-cover"
+        />
       )}
       <div className="prose prose-neutral mt-10 max-w-none prose-headings:font-semibold prose-a:text-black prose-a:underline">
         <ReactMarkdown>{post.content}</ReactMarkdown>

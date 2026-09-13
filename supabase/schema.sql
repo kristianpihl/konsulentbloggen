@@ -7,6 +7,7 @@ create table if not exists posts (
   title text not null,
   excerpt text,
   content text not null,
+  cover_image_url text,
   tags text[] not null default '{}',
   status text not null default 'draft' check (status in ('draft', 'published')),
   published_at timestamptz,
@@ -33,3 +34,37 @@ create policy "Admin har full tilgang"
   for all
   using (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com')
   with check (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com');
+
+-- Lagringsboks for forsidebilder på innlegg.
+insert into storage.buckets (id, name, public)
+values ('post-images', 'post-images', true)
+on conflict (id) do nothing;
+
+create policy "Artikkelbilder er offentlig lesbare"
+  on storage.objects
+  for select
+  using (bucket_id = 'post-images');
+
+create policy "Admin kan laste opp artikkelbilder"
+  on storage.objects
+  for insert
+  with check (
+    bucket_id = 'post-images'
+    and auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com'
+  );
+
+create policy "Admin kan oppdatere artikkelbilder"
+  on storage.objects
+  for update
+  using (
+    bucket_id = 'post-images'
+    and auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com'
+  );
+
+create policy "Admin kan slette artikkelbilder"
+  on storage.objects
+  for delete
+  using (
+    bucket_id = 'post-images'
+    and auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com'
+  );

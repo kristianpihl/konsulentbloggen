@@ -6,6 +6,7 @@ export interface Post {
   title: string;
   excerpt: string | null;
   content: string;
+  cover_image_url: string | null;
   tags: string[];
   status: PostStatus;
   published_at: string | null;
@@ -18,6 +19,7 @@ export interface PostInput {
   title: string;
   excerpt: string;
   content: string;
+  cover_image_url: string;
   tags: string[];
   status: PostStatus;
 }

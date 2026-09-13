@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { slugify } from "@/lib/slugify";
+import { CoverImageField } from "@/components/admin/cover-image-field";
 import type { Post } from "@/types/post";
 import type { PostFormState } from "@/app/admin/actions";
 
@@ -61,6 +62,8 @@ export function PostForm({
           className="mt-1 w-full rounded-md border border-black/15 px-3 py-2 text-sm outline-none focus:border-black/40"
         />
       </div>
+
+      <CoverImageField initialUrl={post?.cover_image_url} />
 
       <div>
         <label htmlFor="content" className="block text-sm font-medium">

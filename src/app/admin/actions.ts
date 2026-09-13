@@ -19,19 +19,32 @@ function parsePostInput(formData: FormData): PostInput {
   const slugRaw = String(formData.get("slug") ?? "").trim();
   const excerpt = String(formData.get("excerpt") ?? "").trim();
   const content = String(formData.get("content") ?? "");
+  const coverImageUrl = String(formData.get("cover_image_url") ?? "").trim();
   const tagsRaw = String(formData.get("tags") ?? "");
   const status = (
     formData.get("status") === "published" ? "published" : "draft"
   ) as PostStatus;
 
-  const tags = tagsRaw
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
+  const tags = [
+    ...new Set(
+      tagsRaw
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+    ),
+  ];
 
   const slug = slugify(slugRaw || title);
 
-  return { title, slug, excerpt, content, tags, status };
+  return {
+    title,
+    slug,
+    excerpt,
+    content,
+    cover_image_url: coverImageUrl,
+    tags,
+    status,
+  };
 }
 
 function errorMessage(error: { code?: string; message: string }): string {
@@ -61,6 +74,7 @@ export async function createPost(
     .from("posts")
     .insert({
       ...input,
+      cover_image_url: input.cover_image_url || null,
       published_at:
         input.status === "published" ? new Date().toISOString() : null,
     })
@@ -103,6 +117,7 @@ export async function updatePost(
     .from("posts")
     .update({
       ...input,
+      cover_image_url: input.cover_image_url || null,
       published_at,
       updated_at: new Date().toISOString(),
     })
