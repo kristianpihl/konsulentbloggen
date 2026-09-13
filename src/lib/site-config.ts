@@ -8,5 +8,5 @@ export const siteConfig = {
     "Blogg og fagprofil for Kristian Pihl, konsulent. Innlegg om prosjektledelse, teknologi og erfaringer fra bransjen.",
   url: "https://kristianpihl.no",
   email: "kristianpihl01@gmail.com",
-  linkedin: "https://www.linkedin.com/in/kristianpihl",
+  linkedin: "https://www.linkedin.com/in/kristianpihlgravdal/",
 };
