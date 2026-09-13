@@ -21,6 +21,7 @@ create index if not exists posts_status_published_at_idx
 alter table posts enable row level security;
 
 -- Alle (også ikke-innloggede besøkende) kan lese publiserte innlegg.
+drop policy if exists "Publiserte innlegg er offentlig lesbare" on posts;
 create policy "Publiserte innlegg er offentlig lesbare"
   on posts
   for select
@@ -29,6 +30,7 @@ create policy "Publiserte innlegg er offentlig lesbare"
 -- Kun den innloggede admin-brukeren (identifisert på e-post) kan
 -- lese utkast og opprette/endre/slette innlegg.
 -- Bytt ut e-postadressen under med din egen admin-e-post hvis den er en annen.
+drop policy if exists "Admin har full tilgang" on posts;
 create policy "Admin har full tilgang"
   on posts
   for all
@@ -40,11 +42,13 @@ insert into storage.buckets (id, name, public)
 values ('post-images', 'post-images', true)
 on conflict (id) do nothing;
 
+drop policy if exists "Artikkelbilder er offentlig lesbare" on storage.objects;
 create policy "Artikkelbilder er offentlig lesbare"
   on storage.objects
   for select
   using (bucket_id = 'post-images');
 
+drop policy if exists "Admin kan laste opp artikkelbilder" on storage.objects;
 create policy "Admin kan laste opp artikkelbilder"
   on storage.objects
   for insert
@@ -53,6 +57,7 @@ create policy "Admin kan laste opp artikkelbilder"
     and auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com'
   );
 
+drop policy if exists "Admin kan oppdatere artikkelbilder" on storage.objects;
 create policy "Admin kan oppdatere artikkelbilder"
   on storage.objects
   for update
@@ -61,6 +66,7 @@ create policy "Admin kan oppdatere artikkelbilder"
     and auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com'
   );
 
+drop policy if exists "Admin kan slette artikkelbilder" on storage.objects;
 create policy "Admin kan slette artikkelbilder"
   on storage.objects
   for delete
