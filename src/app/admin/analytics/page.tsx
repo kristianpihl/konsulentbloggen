@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Sparkline } from "@/components/admin/sparkline";
 import { getPostEngagementStats } from "@/lib/analytics";
+import { categorySlug } from "@/lib/categories";
 
 export const revalidate = 0;
 
@@ -40,9 +42,54 @@ export default async function AnalyticsPage() {
         </div>
       </div>
 
+      <h2 className="mt-10 text-lg font-semibold">Kategorier</h2>
+      <p className="mt-1 text-sm text-black/50">
+        Samlet engasjement per kategori — sortert på mest engasjerende først.
+        Et innlegg kan telle i flere kategorier hvis det har flere tags.
+      </p>
+      <div className="mt-4 overflow-x-auto rounded-lg border border-black/10 bg-white">
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr className="border-b border-black/10 text-black/50">
+              <th className="px-4 py-3 font-medium">Kategori</th>
+              <th className="px-4 py-3 font-medium">Innlegg</th>
+              <th className="px-4 py-3 font-medium">Visninger</th>
+              <th className="px-4 py-3 font-medium">Unike lesere</th>
+              <th className="px-4 py-3 font-medium">Snitt lesetid</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stats.categories.map((category) => (
+              <tr
+                key={category.category}
+                className="border-b border-black/5 last:border-b-0"
+              >
+                <td className="px-4 py-3">
+                  <Link
+                    href={`/kategori/${categorySlug(category.category)}`}
+                    target="_blank"
+                    className="font-medium hover:underline"
+                  >
+                    {category.category}
+                  </Link>
+                </td>
+                <td className="px-4 py-3">{category.postCount}</td>
+                <td className="px-4 py-3">{category.views}</td>
+                <td className="px-4 py-3">{category.uniqueReaders}</td>
+                <td className="px-4 py-3">
+                  {formatDuration(category.avgDurationSeconds)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <h2 className="mt-10 text-lg font-semibold">Innlegg</h2>
       <p className="mt-1 text-sm text-black/50">
         Sortert på flest visninger — de øverste er det som engasjerer mest.
+        Trend viser sidevisninger per dag siste {stats.trendDays} dager, så du
+        ser om interessen holder seg eller dør ut.
       </p>
       <div className="mt-4 overflow-x-auto rounded-lg border border-black/10 bg-white">
         <table className="w-full text-left text-sm">
@@ -52,12 +99,15 @@ export default async function AnalyticsPage() {
               <th className="px-4 py-3 font-medium">Visninger</th>
               <th className="px-4 py-3 font-medium">Unike lesere</th>
               <th className="px-4 py-3 font-medium">Snitt lesetid</th>
+              <th className="px-4 py-3 font-medium">
+                Trend ({stats.trendDays}d)
+              </th>
             </tr>
           </thead>
           <tbody>
             {stats.posts.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-black/50">
+                <td colSpan={5} className="px-4 py-6 text-black/50">
                   Ingen besøksdata på innlegg registrert ennå.
                 </td>
               </tr>
@@ -80,6 +130,9 @@ export default async function AnalyticsPage() {
                 <td className="px-4 py-3">{post.uniqueReaders}</td>
                 <td className="px-4 py-3">
                   {formatDuration(post.avgDurationSeconds)}
+                </td>
+                <td className="px-4 py-3">
+                  <Sparkline data={post.trend} />
                 </td>
               </tr>
             ))}
