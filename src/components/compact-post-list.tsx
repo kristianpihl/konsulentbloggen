@@ -31,6 +31,11 @@ export function CompactPostList({
               <h3 className="font-medium leading-snug group-hover:underline">
                 {post.title}
               </h3>
+              {post.excerpt && (
+                <p className="mt-0.5 line-clamp-1 text-sm text-black/60">
+                  {post.excerpt}
+                </p>
+              )}
             </div>
           </Link>
         </li>
