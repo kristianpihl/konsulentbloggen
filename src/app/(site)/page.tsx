@@ -1,18 +1,10 @@
 import Link from "next/link";
 import { CompactPostList } from "@/components/compact-post-list";
-import { CATEGORIES } from "@/lib/categories";
+import { CATEGORIES, categorySlug, postsForCategory } from "@/lib/categories";
 import { getPublishedPosts } from "@/lib/posts";
 import { getSiteSettings } from "@/lib/settings";
-import type { Post } from "@/types/post";
 
 export const revalidate = 0;
-
-function postsForCategory(posts: Post[], category: string): Post[] {
-  const needle = category.toLowerCase();
-  return posts.filter((post) =>
-    post.tags.some((tag) => tag.toLowerCase() === needle),
-  );
-}
 
 export default async function HomePage() {
   const [posts, settings] = await Promise.all([
@@ -64,7 +56,15 @@ export default async function HomePage() {
             <div className="mt-6 grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-2">
               {CATEGORIES.map((category) => (
                 <div key={category}>
-                  <h3 className="text-base font-semibold">{category}</h3>
+                  <div className="flex items-baseline justify-between">
+                    <h3 className="text-base font-semibold">{category}</h3>
+                    <Link
+                      href={`/kategori/${categorySlug(category)}`}
+                      className="text-sm text-black/60 hover:text-black"
+                    >
+                      Se alle →
+                    </Link>
+                  </div>
                   <div className="mt-3">
                     <CompactPostList
                       posts={postsForCategory(posts, category)}
