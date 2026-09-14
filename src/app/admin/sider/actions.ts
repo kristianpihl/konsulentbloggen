@@ -13,10 +13,11 @@ function parsePageInput(formData: FormData): StaticPageInput {
   const title = String(formData.get("title") ?? "").trim();
   const slugRaw = String(formData.get("slug") ?? "").trim();
   const content = String(formData.get("content") ?? "");
+  const coverImageUrl = String(formData.get("cover_image_url") ?? "").trim();
 
   const slug = slugify(slugRaw || title);
 
-  return { title, slug, content };
+  return { title, slug, content, cover_image_url: coverImageUrl };
 }
 
 function errorMessage(error: { code?: string; message: string }): string {
@@ -49,7 +50,7 @@ export async function createPage(
 
   const { data, error } = await supabase
     .from("pages")
-    .insert(input)
+    .insert({ ...input, cover_image_url: input.cover_image_url || null })
     .select("id")
     .single();
 
@@ -80,7 +81,11 @@ export async function updatePage(
   const supabase = await createClient();
   const { error } = await supabase
     .from("pages")
-    .update({ ...input, updated_at: new Date().toISOString() })
+    .update({
+      ...input,
+      cover_image_url: input.cover_image_url || null,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", id);
 
   if (error) {

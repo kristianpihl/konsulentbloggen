@@ -3,6 +3,7 @@ export interface StaticPage {
   slug: string;
   title: string;
   content: string;
+  cover_image_url: string | null;
   nav_order: number;
   created_at: string;
   updated_at: string;
@@ -12,6 +13,7 @@ export interface StaticPageInput {
   slug: string;
   title: string;
   content: string;
+  cover_image_url: string;
 }
 
 // Slugs som allerede brukes av faste ruter i appen — kan ikke gjenbrukes

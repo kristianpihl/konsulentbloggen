@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { CoverImageField } from "@/components/admin/cover-image-field";
 import { slugify } from "@/lib/slugify";
 import type { StaticPage } from "@/types/page";
 import type { PageFormState } from "@/app/admin/sider/actions";
@@ -53,6 +54,11 @@ export function PageForm({
           automatisk fra tittelen.
         </p>
       </div>
+
+      <CoverImageField
+        initialUrl={page?.cover_image_url}
+        helpText="Valgfritt. Vises øverst på siden. Maks 5 MB."
+      />
 
       <div>
         <label htmlFor="content" className="block text-sm font-medium">

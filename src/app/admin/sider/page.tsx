@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getAllPagesForAdmin } from "@/lib/pages";
-import { DeletePostButton } from "@/components/admin/delete-post-button";
+import { AdminItemRow } from "@/components/admin/admin-item-row";
 import { deletePage } from "./actions";
 
 export const revalidate = 0;
@@ -31,26 +31,15 @@ export default async function AdminPagesDashboard() {
           <p className="px-4 py-6 text-sm text-black/50">Ingen sider ennå.</p>
         )}
         {pages.map((page) => (
-          <div
+          <AdminItemRow
             key={page.id}
-            className="flex items-center justify-between gap-4 px-4 py-4"
-          >
-            <div className="min-w-0">
-              <p className="truncate font-medium">{page.title}</p>
-              <p className="mt-0.5 text-xs text-black/50">/{page.slug}</p>
-            </div>
-            <div className="flex shrink-0 items-center gap-3 text-sm">
-              <Link
-                href={`/admin/sider/${page.id}/edit`}
-                className="text-black/70 hover:text-black"
-              >
-                Rediger
-              </Link>
-              <form action={deletePage.bind(null, page.id)}>
-                <DeletePostButton confirmMessage="Slette denne siden? Den forsvinner også fra toppmenyen. Dette kan ikke angres." />
-              </form>
-            </div>
-          </div>
+            imageUrl={page.cover_image_url}
+            title={page.title}
+            editHref={`/admin/sider/${page.id}/edit`}
+            deleteAction={deletePage.bind(null, page.id)}
+            deleteConfirmMessage="Slette denne siden? Den forsvinner også fra toppmenyen. Dette kan ikke angres."
+            meta={`/${page.slug}`}
+          />
         ))}
       </div>
     </div>

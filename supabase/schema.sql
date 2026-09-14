@@ -129,6 +129,7 @@ create table if not exists pages (
   slug text not null unique,
   title text not null,
   content text not null,
+  cover_image_url text,
   nav_order integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
