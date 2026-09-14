@@ -12,6 +12,23 @@ import {
 } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 
+type ShareMethod = "copy" | "twitter" | "linkedin" | "email" | "native";
+
+function trackShare(method: ShareMethod) {
+  const payload = JSON.stringify({
+    event: "share",
+    path: window.location.pathname,
+    method,
+  });
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon("/api/track", new Blob([payload], { type: "application/json" }));
+  } else {
+    fetch("/api/track", { method: "POST", body: payload, keepalive: true }).catch(() => {
+      // Stille feil — sporing skal aldri påvirke brukeropplevelsen.
+    });
+  }
+}
+
 export function ShareDialog({
   title,
   excerpt,
@@ -44,6 +61,7 @@ export function ShareDialog({
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      trackShare("copy");
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Utilgjengelig utklippstavle — ignorer stille.
@@ -53,6 +71,7 @@ export function ShareDialog({
   async function handleNativeShare() {
     try {
       await navigator.share({ title, url });
+      trackShare("native");
     } catch {
       // Brukeren avbrøt delingen — ikke noe å gjøre.
     }
@@ -125,6 +144,7 @@ export function ShareDialog({
               target="_blank"
               rel="noreferrer"
               aria-label="Del på X"
+              onClick={() => trackShare("twitter")}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/15 text-black/70 hover:bg-black/5"
             >
               <XLogoIcon className="h-4 w-4" />
@@ -134,6 +154,7 @@ export function ShareDialog({
               target="_blank"
               rel="noreferrer"
               aria-label="Del på LinkedIn"
+              onClick={() => trackShare("linkedin")}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/15 text-black/70 hover:bg-black/5"
             >
               <LinkedInIcon className="h-4 w-4" />
@@ -141,6 +162,7 @@ export function ShareDialog({
             <a
               href={emailHref}
               aria-label="Del på e-post"
+              onClick={() => trackShare("email")}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/15 text-black/70 hover:bg-black/5"
             >
               <MailIcon className="h-4 w-4" />

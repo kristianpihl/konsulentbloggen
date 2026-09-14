@@ -82,6 +82,7 @@ create table if not exists page_views (
   session_id text not null,
   referrer text,
   duration_seconds numeric,
+  scroll_depth integer,
   created_at timestamptz not null default now()
 );
 
@@ -171,3 +172,22 @@ values (
 $md$
 )
 on conflict (slug) do nothing;
+
+-- Delingssporing (X/LinkedIn/e-post/kopier lenke) for delingsrate i statistikken.
+create table if not exists post_shares (
+  id uuid primary key default gen_random_uuid(),
+  path text not null,
+  method text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists post_shares_path_idx on post_shares (path);
+create index if not exists post_shares_created_at_idx on post_shares (created_at desc);
+
+alter table post_shares enable row level security;
+
+drop policy if exists "Admin kan lese delingsstatistikk" on post_shares;
+create policy "Admin kan lese delingsstatistikk"
+  on post_shares
+  for select
+  using (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com');

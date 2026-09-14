@@ -13,6 +13,11 @@ function formatDuration(seconds: number | null): string {
   return `${minutes} min ${rest} sek`;
 }
 
+function formatPercent(value: number | null): string {
+  if (value === null) return "—";
+  return `${Math.round(value)}%`;
+}
+
 export default async function AnalyticsPage() {
   const stats = await getPostEngagementStats(30);
 
@@ -22,10 +27,10 @@ export default async function AnalyticsPage() {
       <p className="mt-1 text-sm text-black/60">
         Engasjement på blogginnleggene dine, siste {stats.windowDays} dager.
         Anonymt: ingen cookies eller personopplysninger, kun side, tilfeldig
-        sesjon og varighet.
+        sesjon, varighet, scroll-dybde og delinger.
       </p>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         <div className="rounded-lg border border-black/10 bg-white p-4">
           <p className="text-sm text-black/50">Sidevisninger</p>
           <p className="mt-1 text-2xl font-semibold">{stats.totalViews}</p>
@@ -38,6 +43,18 @@ export default async function AnalyticsPage() {
           <p className="text-sm text-black/50">Snitt lesetid</p>
           <p className="mt-1 text-2xl font-semibold">
             {formatDuration(stats.avgDurationSeconds)}
+          </p>
+        </div>
+        <div className="rounded-lg border border-black/10 bg-white p-4">
+          <p className="text-sm text-black/50">Fullføringsgrad</p>
+          <p className="mt-1 text-2xl font-semibold">
+            {formatPercent(stats.completionRate)}
+          </p>
+        </div>
+        <div className="rounded-lg border border-black/10 bg-white p-4">
+          <p className="text-sm text-black/50">Delingsrate</p>
+          <p className="mt-1 text-2xl font-semibold">
+            {formatPercent(stats.shareRate)}
           </p>
         </div>
       </div>
@@ -54,8 +71,14 @@ export default async function AnalyticsPage() {
               <th className="px-4 py-3 font-medium">Kategori</th>
               <th className="px-4 py-3 font-medium">Innlegg</th>
               <th className="px-4 py-3 font-medium">Visninger</th>
-              <th className="px-4 py-3 font-medium">Unike lesere</th>
-              <th className="px-4 py-3 font-medium">Snitt lesetid</th>
+              <th className="px-4 py-3 font-medium">Lesere</th>
+              <th className="px-4 py-3 font-medium">Lesetid</th>
+              <th className="px-4 py-3 font-medium">Fullføring</th>
+              <th className="px-4 py-3 font-medium">Delt</th>
+              <th className="px-4 py-3 font-medium">Scroll</th>
+              <th className="px-4 py-3 font-medium">
+                Trend ({stats.trendDays}d)
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -79,6 +102,18 @@ export default async function AnalyticsPage() {
                 <td className="px-4 py-3">
                   {formatDuration(category.avgDurationSeconds)}
                 </td>
+                <td className="px-4 py-3">
+                  {formatPercent(category.completionRate)}
+                </td>
+                <td className="px-4 py-3">
+                  {category.shares} ({formatPercent(category.shareRate)})
+                </td>
+                <td className="px-4 py-3">
+                  {formatPercent(category.avgScrollDepth)}
+                </td>
+                <td className="px-4 py-3">
+                  <Sparkline data={category.trend} />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -87,9 +122,10 @@ export default async function AnalyticsPage() {
 
       <h2 className="mt-10 text-lg font-semibold">Innlegg</h2>
       <p className="mt-1 text-sm text-black/50">
-        Sortert på flest visninger — de øverste er det som engasjerer mest.
-        Trend viser sidevisninger per dag siste {stats.trendDays} dager, så du
-        ser om interessen holder seg eller dør ut.
+        Sortert på flest visninger. <strong>Fullføring</strong> sammenligner
+        faktisk lesetid mot estimert lesetid (~200 ord/min) — det sterkeste
+        engasjement-signalet. <strong>Trend</strong> viser sidevisninger per
+        dag siste {stats.trendDays} dager.
       </p>
       <div className="mt-4 overflow-x-auto rounded-lg border border-black/10 bg-white">
         <table className="w-full text-left text-sm">
@@ -97,8 +133,11 @@ export default async function AnalyticsPage() {
             <tr className="border-b border-black/10 text-black/50">
               <th className="px-4 py-3 font-medium">Innlegg</th>
               <th className="px-4 py-3 font-medium">Visninger</th>
-              <th className="px-4 py-3 font-medium">Unike lesere</th>
-              <th className="px-4 py-3 font-medium">Snitt lesetid</th>
+              <th className="px-4 py-3 font-medium">Lesere</th>
+              <th className="px-4 py-3 font-medium">Lesetid</th>
+              <th className="px-4 py-3 font-medium">Fullføring</th>
+              <th className="px-4 py-3 font-medium">Delt</th>
+              <th className="px-4 py-3 font-medium">Scroll</th>
               <th className="px-4 py-3 font-medium">
                 Trend ({stats.trendDays}d)
               </th>
@@ -107,7 +146,7 @@ export default async function AnalyticsPage() {
           <tbody>
             {stats.posts.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-black/50">
+                <td colSpan={8} className="px-4 py-6 text-black/50">
                   Ingen besøksdata på innlegg registrert ennå.
                 </td>
               </tr>
@@ -130,6 +169,15 @@ export default async function AnalyticsPage() {
                 <td className="px-4 py-3">{post.uniqueReaders}</td>
                 <td className="px-4 py-3">
                   {formatDuration(post.avgDurationSeconds)}
+                </td>
+                <td className="px-4 py-3">
+                  {formatPercent(post.completionRate)}
+                </td>
+                <td className="px-4 py-3">
+                  {post.shares} ({formatPercent(post.shareRate)})
+                </td>
+                <td className="px-4 py-3">
+                  {formatPercent(post.avgScrollDepth)}
                 </td>
                 <td className="px-4 py-3">
                   <Sparkline data={post.trend} />
