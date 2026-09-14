@@ -68,6 +68,19 @@ function average(numbers: number[]): number | null {
   return numbers.reduce((sum, n) => sum + n, 0) / numbers.length;
 }
 
+// Median i stedet for gjennomsnitt for fullføringsgrad — langt mer
+// robust mot enkeltbesøk som ble stående lenge (f.eks. en fane i
+// bakgrunnen), som ellers kan dra et gjennomsnitt kraftig opp når det
+// er få besøk totalt.
+function median(numbers: number[]): number | null {
+  if (numbers.length === 0) return null;
+  const sorted = [...numbers].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 !== 0
+    ? sorted[mid]
+    : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
 function dayKey(iso: string): string {
   return iso.slice(0, 10); // YYYY-MM-DD
 }
@@ -100,14 +113,20 @@ function clampCompletionRate(rate: number): number {
   return Math.min(rate, MAX_COMPLETION_RATE);
 }
 
+function completionRateFromRatios(ratios: number[]): number | null {
+  const m = median(ratios);
+  return m === null ? null : clampCompletionRate(m);
+}
+
 interface RunningTotals {
   views: number;
   sessions: Set<string>;
   durations: number[];
   scrollDepths: number[];
   dailyCounts: Map<string, number>;
-  durationSum: number;
-  estimatedSum: number;
+  // (faktisk lesetid ÷ estimert lesetid) × 100, én verdi per visning —
+  // medianen av disse blir fullføringsgraden.
+  completionRatios: number[];
 }
 
 function newTotals(): RunningTotals {
@@ -117,8 +136,7 @@ function newTotals(): RunningTotals {
     durations: [],
     scrollDepths: [],
     dailyCounts: new Map(),
-    durationSum: 0,
-    estimatedSum: 0,
+    completionRatios: [],
   };
 }
 
@@ -187,8 +205,7 @@ export async function getPostEngagementStats(
 
   const totalViews = viewRows.length;
   const uniqueReaders = new Set(viewRows.map((row) => row.session_id)).size;
-  let globalDurationSum = 0;
-  let globalEstimatedSum = 0;
+  const globalCompletionRatios: number[] = [];
 
   const bySlug = new Map<string, RunningTotals>();
   const byCategory = new Map<string, RunningTotals>();
@@ -197,18 +214,20 @@ export async function getPostEngagementStats(
   for (const row of viewRows) {
     const slug = row.path.replace(/^\/blog\//, "");
     const estimatedSeconds = estimatedSecondsBySlug.get(slug);
+    const ratio =
+      typeof row.duration_seconds === "number" && estimatedSeconds
+        ? (row.duration_seconds / estimatedSeconds) * 100
+        : null;
 
     const postEntry = bySlug.get(slug) ?? newTotals();
     postEntry.views += 1;
     postEntry.sessions.add(row.session_id);
     if (typeof row.duration_seconds === "number") {
       postEntry.durations.push(row.duration_seconds);
-      if (estimatedSeconds) {
-        postEntry.durationSum += row.duration_seconds;
-        postEntry.estimatedSum += estimatedSeconds;
-        globalDurationSum += row.duration_seconds;
-        globalEstimatedSum += estimatedSeconds;
-      }
+    }
+    if (ratio !== null) {
+      postEntry.completionRatios.push(ratio);
+      globalCompletionRatios.push(ratio);
     }
     if (typeof row.scroll_depth === "number") {
       postEntry.scrollDepths.push(row.scroll_depth);
@@ -226,10 +245,9 @@ export async function getPostEngagementStats(
       catEntry.sessions.add(row.session_id);
       if (typeof row.duration_seconds === "number") {
         catEntry.durations.push(row.duration_seconds);
-        if (estimatedSeconds) {
-          catEntry.durationSum += row.duration_seconds;
-          catEntry.estimatedSum += estimatedSeconds;
-        }
+      }
+      if (ratio !== null) {
+        catEntry.completionRatios.push(ratio);
       }
       if (typeof row.scroll_depth === "number") {
         catEntry.scrollDepths.push(row.scroll_depth);
@@ -252,10 +270,7 @@ export async function getPostEngagementStats(
         views: entry.views,
         uniqueReaders: entry.sessions.size,
         avgDurationSeconds: average(entry.durations),
-        completionRate:
-          entry.estimatedSum > 0
-            ? clampCompletionRate((entry.durationSum / entry.estimatedSum) * 100)
-            : null,
+        completionRate: completionRateFromRatios(entry.completionRatios),
         shares,
         shareRate: entry.views > 0 ? (shares / entry.views) * 100 : null,
         avgScrollDepth: average(entry.scrollDepths),
@@ -273,10 +288,7 @@ export async function getPostEngagementStats(
       views: entry?.views ?? 0,
       uniqueReaders: entry?.sessions.size ?? 0,
       avgDurationSeconds: entry ? average(entry.durations) : null,
-      completionRate:
-        entry && entry.estimatedSum > 0
-          ? clampCompletionRate((entry.durationSum / entry.estimatedSum) * 100)
-          : null,
+      completionRate: entry ? completionRateFromRatios(entry.completionRatios) : null,
       shares,
       shareRate: entry && entry.views > 0 ? (shares / entry.views) * 100 : null,
       avgScrollDepth: entry ? average(entry.scrollDepths) : null,
@@ -292,10 +304,7 @@ export async function getPostEngagementStats(
         .map((row) => row.duration_seconds)
         .filter((d): d is number => typeof d === "number"),
     ),
-    completionRate:
-      globalEstimatedSum > 0
-        ? clampCompletionRate((globalDurationSum / globalEstimatedSum) * 100)
-        : null,
+    completionRate: completionRateFromRatios(globalCompletionRatios),
     shareRate: totalViews > 0 ? (shareRows.length / totalViews) * 100 : null,
     posts,
     categories,
