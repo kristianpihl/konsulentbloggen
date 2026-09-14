@@ -58,20 +58,22 @@ export default async function HomePage() {
       </div>
 
       {posts.length > 0 && (
-        <div className="mx-auto max-w-5xl px-6 pb-20">
-          <h2 className="text-lg font-semibold">Kategorier</h2>
-          <div className="mt-6 grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-2">
-            {CATEGORIES.map((category) => (
-              <div key={category}>
-                <h3 className="text-base font-semibold">{category}</h3>
-                <div className="mt-3">
-                  <CompactPostList
-                    posts={postsForCategory(posts, category)}
-                    emptyLabel="Ingen innlegg i denne kategorien ennå."
-                  />
+        <div className="bg-neutral-100 py-16">
+          <div className="mx-auto max-w-5xl px-6">
+            <h2 className="text-lg font-semibold">Kategorier</h2>
+            <div className="mt-6 grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-2">
+              {CATEGORIES.map((category) => (
+                <div key={category}>
+                  <h3 className="text-base font-semibold">{category}</h3>
+                  <div className="mt-3">
+                    <CompactPostList
+                      posts={postsForCategory(posts, category)}
+                      emptyLabel="Ingen innlegg i denne kategorien ennå."
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}
