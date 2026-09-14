@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import { ArticleActions } from "@/components/article-actions";
 import { formatDate } from "@/lib/slugify";
 import { getPublishedPostBySlug } from "@/lib/posts";
+import { siteConfig } from "@/lib/site-config";
 
 export const revalidate = 0;
 
@@ -29,33 +31,73 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
 
   if (!post) notFound();
 
+  // Vis "Oppdatert" kun hvis innlegget faktisk er endret en god stund
+  // etter at det ble opprettet (ikke bare avrundingsstøy fra lagring).
+  const wasUpdated =
+    new Date(post.updated_at).getTime() -
+      new Date(post.created_at).getTime() >
+    60_000;
+
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
-      <p className="text-sm text-black/50">{formatDate(post.published_at)}</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+      <h1 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
         {post.title}
       </h1>
-      {post.tags.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {post.tags.map((tag, index) => (
-            <span
-              key={`${tag}-${index}`}
-              className="rounded-full bg-black/5 px-2.5 py-0.5 text-xs text-black/60"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
+
       {post.cover_image_url && (
         // eslint-disable-next-line @next/next/no-img-element -- bilde-URL kommer fra Supabase Storage, varierer per prosjekt
         <img
           src={post.cover_image_url}
           alt=""
-          className="mt-8 w-full rounded-lg border border-black/10 object-cover"
+          className="mt-8 w-full object-cover"
         />
       )}
-      <div className="prose prose-neutral mt-10 max-w-none prose-headings:font-semibold prose-a:text-black prose-a:underline">
+
+      {post.excerpt && (
+        <p className="mt-8 text-xl font-medium leading-snug text-black/80">
+          {post.excerpt}
+        </p>
+      )}
+
+      <div className="mt-6 flex flex-col gap-1 text-sm text-black/60">
+        <p>
+          <span className="font-semibold uppercase tracking-wide text-black/40">
+            Tekst:
+          </span>{" "}
+          {siteConfig.name}
+        </p>
+        <p>
+          <span className="font-semibold uppercase tracking-wide text-black/40">
+            Publisert:
+          </span>{" "}
+          {formatDate(post.published_at)}
+          {wasUpdated && (
+            <>
+              <span className="mx-2 text-black/30">·</span>
+              <span className="font-semibold uppercase tracking-wide text-black/40">
+                Oppdatert:
+              </span>{" "}
+              {formatDate(post.updated_at)}
+            </>
+          )}
+        </p>
+        {post.tags.length > 0 && (
+          <p>
+            <span className="font-semibold uppercase tracking-wide text-black/40">
+              Tema:
+            </span>{" "}
+            {post.tags.join(", ")}
+          </p>
+        )}
+      </div>
+
+      <hr className="mt-6 border-black/10" />
+
+      <ArticleActions title={post.title} />
+
+      <hr className="border-black/10" />
+
+      <div className="prose prose-neutral mt-8 max-w-none prose-headings:font-semibold prose-a:text-black prose-a:underline">
         <ReactMarkdown>{post.content}</ReactMarkdown>
       </div>
     </article>
