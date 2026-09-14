@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Sparkline } from "@/components/admin/sparkline";
-import { getPostEngagementStats } from "@/lib/analytics";
+import { getPostEngagementStats, MAX_COMPLETION_RATE } from "@/lib/analytics";
 import { categorySlug } from "@/lib/categories";
 
 export const revalidate = 0;
@@ -16,6 +16,14 @@ function formatDuration(seconds: number | null): string {
 function formatPercent(value: number | null): string {
   if (value === null) return "—";
   return `${Math.round(value)}%`;
+}
+
+// Fullføringsgrad clampes på et tak (se MAX_COMPLETION_RATE) — vis "+"
+// når taket er nådd, så det er tydelig at det ikke er et eksakt tall.
+function formatCompletionRate(value: number | null): string {
+  if (value === null) return "—";
+  const suffix = value >= MAX_COMPLETION_RATE ? "+" : "";
+  return `${Math.round(value)}%${suffix}`;
 }
 
 export default async function AnalyticsPage() {
@@ -48,7 +56,7 @@ export default async function AnalyticsPage() {
         <div className="rounded-lg border border-black/10 bg-white p-4">
           <p className="text-sm text-black/50">Fullføringsgrad</p>
           <p className="mt-1 text-2xl font-semibold">
-            {formatPercent(stats.completionRate)}
+            {formatCompletionRate(stats.completionRate)}
           </p>
         </div>
         <div className="rounded-lg border border-black/10 bg-white p-4">
@@ -103,7 +111,7 @@ export default async function AnalyticsPage() {
                   {formatDuration(category.avgDurationSeconds)}
                 </td>
                 <td className="px-4 py-3">
-                  {formatPercent(category.completionRate)}
+                  {formatCompletionRate(category.completionRate)}
                 </td>
                 <td className="px-4 py-3">
                   {category.shares} ({formatPercent(category.shareRate)})
@@ -171,7 +179,7 @@ export default async function AnalyticsPage() {
                   {formatDuration(post.avgDurationSeconds)}
                 </td>
                 <td className="px-4 py-3">
-                  {formatPercent(post.completionRate)}
+                  {formatCompletionRate(post.completionRate)}
                 </td>
                 <td className="px-4 py-3">
                   {post.shares} ({formatPercent(post.shareRate)})

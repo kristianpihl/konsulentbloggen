@@ -5,6 +5,13 @@ import type { Post } from "@/types/post";
 
 const TREND_DAYS = 14;
 const WORDS_PER_MINUTE = 200;
+// Gulv på estimert lesetid — hindrer at svært korte innlegg (eller
+// testdata) gir absurd høy fullføringsgrad når noen bare er innom et
+// par sekunder ekstra.
+const MIN_ESTIMATED_READING_SECONDS = 20;
+// Tak på fullføringsgrad som vises — over dette gir prosenttallet ikke
+// mer innsikt, bare støy fra enkeltbesøk som ble stående lenge.
+export const MAX_COMPLETION_RATE = 200;
 
 export interface PostEngagement {
   slug: string;
@@ -86,7 +93,11 @@ function categoriesForPost(post: Post): string[] {
 // (faktisk lesetid ÷ estimert lesetid).
 function estimateReadingSeconds(content: string): number {
   const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
-  return (wordCount / WORDS_PER_MINUTE) * 60;
+  return Math.max(MIN_ESTIMATED_READING_SECONDS, (wordCount / WORDS_PER_MINUTE) * 60);
+}
+
+function clampCompletionRate(rate: number): number {
+  return Math.min(rate, MAX_COMPLETION_RATE);
 }
 
 interface RunningTotals {
@@ -243,7 +254,7 @@ export async function getPostEngagementStats(
         avgDurationSeconds: average(entry.durations),
         completionRate:
           entry.estimatedSum > 0
-            ? (entry.durationSum / entry.estimatedSum) * 100
+            ? clampCompletionRate((entry.durationSum / entry.estimatedSum) * 100)
             : null,
         shares,
         shareRate: entry.views > 0 ? (shares / entry.views) * 100 : null,
@@ -264,7 +275,7 @@ export async function getPostEngagementStats(
       avgDurationSeconds: entry ? average(entry.durations) : null,
       completionRate:
         entry && entry.estimatedSum > 0
-          ? (entry.durationSum / entry.estimatedSum) * 100
+          ? clampCompletionRate((entry.durationSum / entry.estimatedSum) * 100)
           : null,
       shares,
       shareRate: entry && entry.views > 0 ? (shares / entry.views) * 100 : null,
@@ -282,7 +293,9 @@ export async function getPostEngagementStats(
         .filter((d): d is number => typeof d === "number"),
     ),
     completionRate:
-      globalEstimatedSum > 0 ? (globalDurationSum / globalEstimatedSum) * 100 : null,
+      globalEstimatedSum > 0
+        ? clampCompletionRate((globalDurationSum / globalEstimatedSum) * 100)
+        : null,
     shareRate: totalViews > 0 ? (shareRows.length / totalViews) * 100 : null,
     posts,
     categories,

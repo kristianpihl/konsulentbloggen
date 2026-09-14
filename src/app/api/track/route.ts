@@ -13,7 +13,7 @@ import { createAdminClient } from "@/lib/supabase/admin-client";
 // - "share": registrerer at noen delte en artikkel (og hvordan).
 
 const MAX_PATH_LENGTH = 512;
-const MAX_DURATION_SECONDS = 60 * 60 * 6; // 6 timer, urimelig lengre enn det er reell lesetid
+const MAX_DURATION_SECONDS = 60 * 20; // 20 minutter — lenger enn det er realistisk å faktisk lese et innlegg; lengre verdier er nesten alltid en fane som ble stående åpen i bakgrunnen
 const VALID_SHARE_METHODS = ["copy", "twitter", "linkedin", "email", "native"];
 
 export async function POST(request: Request) {
