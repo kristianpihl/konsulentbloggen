@@ -1,10 +1,18 @@
 import Link from "next/link";
-import { PostCard } from "@/components/post-card";
+import { CompactPostList } from "@/components/compact-post-list";
+import { CATEGORIES } from "@/lib/categories";
 import { getPublishedPosts } from "@/lib/posts";
 import { getSiteSettings } from "@/lib/settings";
-import { siteConfig } from "@/lib/site-config";
+import type { Post } from "@/types/post";
 
 export const revalidate = 0;
+
+function postsForCategory(posts: Post[], category: string): Post[] {
+  const needle = category.toLowerCase();
+  return posts.filter((post) =>
+    post.tags.some((tag) => tag.toLowerCase() === needle),
+  );
+}
 
 export default async function HomePage() {
   const [posts, settings] = await Promise.all([
@@ -15,45 +23,25 @@ export default async function HomePage() {
 
   return (
     <div>
-      {settings.hero_image_url && (
-        // eslint-disable-next-line @next/next/no-img-element -- bilde-URL kommer fra Supabase Storage, varierer per prosjekt
-        <img
-          src={settings.hero_image_url}
-          alt=""
-          className="h-64 w-full object-cover sm:h-80 md:h-[28rem]"
-        />
-      )}
-
-      <div className="mx-auto max-w-3xl px-6 py-16">
-        <section>
-          <p className="text-sm font-medium text-black/50">{siteConfig.role}</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
-            {siteConfig.name}
-          </h1>
-          <p className="mt-4 max-w-xl text-lg text-black/70">
-            {siteConfig.tagline}
-          </p>
-          <div className="mt-6 flex gap-4 text-sm">
-            <Link
-              href="/blog"
-              className="rounded-md bg-black px-4 py-2 font-medium text-white hover:bg-black/80"
-            >
-              Les bloggen
-            </Link>
-            <Link
-              href="/om"
-              className="rounded-md border border-black/15 px-4 py-2 font-medium hover:bg-black/5"
-            >
-              Om meg
-            </Link>
+      <div className="mx-auto max-w-5xl px-6 py-16">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+          <div>
+            {settings.hero_image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element -- bilde-URL kommer fra Supabase Storage, varierer per prosjekt
+              <img
+                src={settings.hero_image_url}
+                alt=""
+                className="h-64 w-full rounded-lg border border-black/10 object-cover sm:h-80 lg:h-[28rem]"
+              />
+            ) : (
+              <div className="flex h-64 w-full items-center justify-center rounded-lg border border-dashed border-black/15 text-center text-sm text-black/40 sm:h-80 lg:h-[28rem]">
+                Last opp et hovedbilde under Innstillinger i admin-panelet
+              </div>
+            )}
           </div>
-        </section>
-      </div>
 
-      {latestPosts.length > 0 && (
-        <div className="mx-auto max-w-5xl px-6 pb-16">
-          <section>
-            <div className="mb-8 flex items-baseline justify-between">
+          <div>
+            <div className="flex items-baseline justify-between">
               <h2 className="text-lg font-semibold">Siste innlegg</h2>
               <Link
                 href="/blog"
@@ -62,12 +50,29 @@ export default async function HomePage() {
                 Se alle →
               </Link>
             </div>
-            <div className="grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2">
-              {latestPosts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
+            <div className="mt-4">
+              <CompactPostList posts={latestPosts} />
             </div>
-          </section>
+          </div>
+        </div>
+      </div>
+
+      {posts.length > 0 && (
+        <div className="mx-auto max-w-5xl px-6 pb-20">
+          <h2 className="text-lg font-semibold">Kategorier</h2>
+          <div className="mt-6 grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-2">
+            {CATEGORIES.map((category) => (
+              <div key={category}>
+                <h3 className="text-base font-semibold">{category}</h3>
+                <div className="mt-3">
+                  <CompactPostList
+                    posts={postsForCategory(posts, category)}
+                    emptyLabel="Ingen innlegg i denne kategorien ennå."
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
