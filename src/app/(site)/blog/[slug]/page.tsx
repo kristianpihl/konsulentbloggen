@@ -93,7 +93,11 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
 
       <hr className="mt-6 border-black/10" />
 
-      <ArticleActions title={post.title} />
+      <ArticleActions
+        title={post.title}
+        excerpt={post.excerpt}
+        coverImageUrl={post.cover_image_url}
+      />
 
       <hr className="border-black/10" />
 

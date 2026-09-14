@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ShareDialog } from "@/components/share-dialog";
 
 function PdfIcon() {
   return (
@@ -39,50 +39,17 @@ function PrintIcon() {
   );
 }
 
-function ShareIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      className="h-6 w-6"
-      aria-hidden
-    >
-      <circle cx="18" cy="5" r="2.5" />
-      <circle cx="6" cy="12" r="2.5" />
-      <circle cx="18" cy="19" r="2.5" />
-      <path d="M8.2 10.8 15.8 6.2M8.2 13.2l7.6 4.6" />
-    </svg>
-  );
-}
-
-export function ArticleActions({ title }: { title: string }) {
-  const [copied, setCopied] = useState(false);
-
+export function ArticleActions({
+  title,
+  excerpt,
+  coverImageUrl,
+}: {
+  title: string;
+  excerpt?: string | null;
+  coverImageUrl?: string | null;
+}) {
   function handlePrint() {
     window.print();
-  }
-
-  async function handleShare() {
-    const url = window.location.href;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, url });
-      } catch {
-        // Brukeren avbrøt delingen — ikke noe å gjøre.
-      }
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Utilgjengelig utklippstavle — ignorer stille.
-    }
   }
 
   return (
@@ -103,16 +70,7 @@ export function ArticleActions({ title }: { title: string }) {
         <PrintIcon />
         <span className="text-xs font-medium tracking-wide">PRINT</span>
       </button>
-      <button
-        type="button"
-        onClick={handleShare}
-        className="flex flex-col items-center gap-1.5 text-black/60 hover:text-black"
-      >
-        <ShareIcon />
-        <span className="text-xs font-medium tracking-wide">
-          {copied ? "KOPIERT!" : "DEL"}
-        </span>
-      </button>
+      <ShareDialog title={title} excerpt={excerpt} coverImageUrl={coverImageUrl} />
     </div>
   );
 }
