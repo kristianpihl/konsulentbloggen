@@ -6,12 +6,16 @@ import { getSiteSettings } from "@/lib/settings";
 
 export const revalidate = 0;
 
+// Maks antall innlegg vist per liste på forsiden (nyeste publiserte først).
+// "Se alle →"-lenkene tar deg til sider uten denne begrensningen.
+const MAX_PREVIEW_POSTS = 5;
+
 export default async function HomePage() {
   const [posts, settings] = await Promise.all([
     getPublishedPosts(),
     getSiteSettings(),
   ]);
-  const latestPosts = posts.slice(0, 4);
+  const latestPosts = posts.slice(0, MAX_PREVIEW_POSTS);
 
   return (
     <div>
@@ -67,7 +71,10 @@ export default async function HomePage() {
                   </div>
                   <div className="mt-3">
                     <CompactPostList
-                      posts={postsForCategory(posts, category)}
+                      posts={postsForCategory(posts, category).slice(
+                        0,
+                        MAX_PREVIEW_POSTS,
+                      )}
                       emptyLabel="Ingen innlegg i denne kategorien ennå."
                     />
                   </div>
