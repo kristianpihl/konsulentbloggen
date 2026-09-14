@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { formatDate } from "@/lib/slugify";
 import type { Post } from "@/types/post";
 
 export function CompactPostList({
@@ -29,10 +28,7 @@ export function CompactPostList({
               <div className="h-14 w-16 shrink-0 rounded-md border border-black/10 bg-black/5" />
             )}
             <div className="min-w-0">
-              <p className="text-xs text-black/50">
-                {formatDate(post.published_at)}
-              </p>
-              <h3 className="mt-0.5 font-medium leading-snug group-hover:underline">
+              <h3 className="font-medium leading-snug group-hover:underline">
                 {post.title}
               </h3>
             </div>

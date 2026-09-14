@@ -2,19 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  ChartIcon,
-  HomeIcon,
-  LogoutIcon,
-  PagesIcon,
-  PostsIcon,
-} from "@/components/icons";
+import { ChartIcon, LogoutIcon, PagesIcon, PostsIcon } from "@/components/icons";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Innlegg", icon: PostsIcon },
   { href: "/admin/sider", label: "Sider", icon: PagesIcon },
   { href: "/admin/analytics", label: "Statistikk", icon: ChartIcon },
-  { href: "/admin/settings", label: "Fremside", icon: HomeIcon },
 ] as const;
 
 function isNavItemActive(pathname: string, href: string): boolean {

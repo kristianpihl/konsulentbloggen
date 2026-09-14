@@ -99,31 +99,6 @@ create policy "Admin kan lese besøksstatistikk"
   for select
   using (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com');
 
--- Redigerbart hovedbilde på forsiden.
-create table if not exists site_settings (
-  id text primary key default 'default',
-  hero_image_url text,
-  updated_at timestamptz not null default now()
-);
-
-insert into site_settings (id) values ('default')
-on conflict (id) do nothing;
-
-alter table site_settings enable row level security;
-
-drop policy if exists "Alle kan lese sideinnstillinger" on site_settings;
-create policy "Alle kan lese sideinnstillinger"
-  on site_settings
-  for select
-  using (true);
-
-drop policy if exists "Admin kan oppdatere sideinnstillinger" on site_settings;
-create policy "Admin kan oppdatere sideinnstillinger"
-  on site_settings
-  for update
-  using (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com')
-  with check (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com');
-
 -- Redigerbare statiske sider (f.eks. "Om meg"), administrert fra /admin/sider.
 create table if not exists pages (
   id uuid primary key default gen_random_uuid(),

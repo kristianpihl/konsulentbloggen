@@ -141,22 +141,6 @@ export function ChartIcon({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
-export function HomeIcon({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      className={className}
-      aria-hidden
-    >
-      <path d="m4 10.5 8-6.5 8 6.5" />
-      <path d="M6 9.5V20h12V9.5" />
-    </svg>
-  );
-}
-
 export function PagesIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg

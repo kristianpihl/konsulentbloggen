@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin-client";
 import { getAllPostsForAdmin } from "@/lib/posts";
 import { CATEGORIES } from "@/lib/categories";
 import type { Post } from "@/types/post";
@@ -311,4 +312,32 @@ export async function getPostEngagementStats(
     windowDays,
     trendDays: TREND_DAYS,
   };
+}
+
+// Henter totalt antall sidevisninger per innlegg (all tid). Brukes til å
+// sortere kategori-seksjonene på forsiden etter popularitet.
+//
+// Kalles fra offentlige sider (uten innlogget admin-sesjon), så vanlig
+// createClient() ville blitt blokkert av RLS på page_views. Bruker derfor
+// service_role-klienten — trygt her siden vi kun bruker tallene til å
+// avgjøre sorteringsrekkefølge på innhold som uansett er offentlig.
+export async function getPostViewCounts(): Promise<Map<string, number>> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("page_views")
+    .select("path")
+    .like("path", "/blog/%")
+    .limit(50000);
+
+  if (error || !data) {
+    console.error("Klarte ikke å hente visningstall:", error?.message);
+    return new Map();
+  }
+
+  const counts = new Map<string, number>();
+  for (const row of data) {
+    const slug = row.path.replace(/^\/blog\//, "");
+    counts.set(slug, (counts.get(slug) ?? 0) + 1);
+  }
+  return counts;
 }

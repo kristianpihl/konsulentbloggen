@@ -1,37 +1,69 @@
 import Link from "next/link";
 import { CompactPostList } from "@/components/compact-post-list";
 import { CATEGORIES, categorySlug, postsForCategory } from "@/lib/categories";
+import { getPostViewCounts } from "@/lib/analytics";
 import { getPublishedPosts } from "@/lib/posts";
-import { getSiteSettings } from "@/lib/settings";
+import type { Post } from "@/types/post";
 
 export const revalidate = 0;
 
-// Maks antall innlegg vist per liste på forsiden (nyeste publiserte først).
+// Maks antall innlegg vist per liste på forsiden.
 // "Se alle →"-lenkene tar deg til sider uten denne begrensningen.
 const MAX_PREVIEW_POSTS = 5;
 
+// Sorterer etter antall sidevisninger (mest populære først). Innlegg uten
+// visningsdata ennå faller tilbake til nyeste-først, slik at ferske
+// innlegg ikke forsvinner nederst før statistikken har rukket å samle seg.
+function sortByPopularity(posts: Post[], viewCounts: Map<string, number>): Post[] {
+  return [...posts].sort((a, b) => {
+    const diff = (viewCounts.get(b.slug) ?? 0) - (viewCounts.get(a.slug) ?? 0);
+    if (diff !== 0) return diff;
+    return (
+      new Date(b.published_at ?? 0).getTime() -
+      new Date(a.published_at ?? 0).getTime()
+    );
+  });
+}
+
 export default async function HomePage() {
-  const [posts, settings] = await Promise.all([
+  const [posts, viewCounts] = await Promise.all([
     getPublishedPosts(),
-    getSiteSettings(),
+    getPostViewCounts(),
   ]);
-  const latestPosts = posts.slice(0, MAX_PREVIEW_POSTS);
+  const [featuredPost, ...rest] = posts;
+  const latestPosts = rest.slice(0, MAX_PREVIEW_POSTS);
 
   return (
     <div>
       <div className="mx-auto max-w-5xl px-6 py-16">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           <div>
-            {settings.hero_image_url ? (
-              // eslint-disable-next-line @next/next/no-img-element -- bilde-URL kommer fra Supabase Storage, varierer per prosjekt
-              <img
-                src={settings.hero_image_url}
-                alt=""
-                className="h-64 w-full rounded-lg border border-black/10 object-cover sm:h-80 lg:h-[28rem]"
-              />
+            {featuredPost ? (
+              <Link href={`/blog/${featuredPost.slug}`} className="group block">
+                {featuredPost.cover_image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- bilde-URL kommer fra Supabase Storage, varierer per prosjekt
+                  <img
+                    src={featuredPost.cover_image_url}
+                    alt=""
+                    className="h-64 w-full rounded-lg border border-black/10 object-cover sm:h-80 lg:h-[28rem]"
+                  />
+                ) : (
+                  <div className="flex h-64 w-full items-center justify-center rounded-lg border border-dashed border-black/15 text-center text-sm text-black/40 sm:h-80 lg:h-[28rem]">
+                    Ingen bilde satt for dette innlegget
+                  </div>
+                )}
+                <div className="mt-4">
+                  <h1 className="text-2xl font-semibold tracking-tight group-hover:underline">
+                    {featuredPost.title}
+                  </h1>
+                  {featuredPost.excerpt && (
+                    <p className="mt-2 text-black/70">{featuredPost.excerpt}</p>
+                  )}
+                </div>
+              </Link>
             ) : (
               <div className="flex h-64 w-full items-center justify-center rounded-lg border border-dashed border-black/15 text-center text-sm text-black/40 sm:h-80 lg:h-[28rem]">
-                Last opp et hovedbilde under Innstillinger i admin-panelet
+                Ingen innlegg publisert ennå
               </div>
             )}
           </div>
@@ -71,10 +103,10 @@ export default async function HomePage() {
                   </div>
                   <div className="mt-3">
                     <CompactPostList
-                      posts={postsForCategory(posts, category).slice(
-                        0,
-                        MAX_PREVIEW_POSTS,
-                      )}
+                      posts={sortByPopularity(
+                        postsForCategory(posts, category),
+                        viewCounts,
+                      ).slice(0, MAX_PREVIEW_POSTS)}
                       emptyLabel="Ingen innlegg i denne kategorien ennå."
                     />
                   </div>
