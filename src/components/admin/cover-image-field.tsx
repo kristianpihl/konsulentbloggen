@@ -7,8 +7,14 @@ const MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
 export function CoverImageField({
   initialUrl,
+  name = "cover_image_url",
+  label = "Forsidebilde",
+  helpText = "Valgfritt. Vises i blogglisten og øverst i innlegget. Maks 5 MB.",
 }: {
   initialUrl?: string | null;
+  name?: string;
+  label?: string;
+  helpText?: string;
 }) {
   const [url, setUrl] = useState(initialUrl ?? "");
   const [uploading, setUploading] = useState(false);
@@ -53,8 +59,8 @@ export function CoverImageField({
 
   return (
     <div>
-      <label className="block text-sm font-medium">Forsidebilde</label>
-      <input type="hidden" name="cover_image_url" value={url} />
+      <label className="block text-sm font-medium">{label}</label>
+      <input type="hidden" name={name} value={url} />
 
       {url ? (
         <div className="mt-2 space-y-2">
@@ -102,9 +108,7 @@ export function CoverImageField({
       />
 
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-      <p className="mt-1 text-xs text-black/50">
-        Valgfritt. Vises i blogglisten og øverst i innlegget. Maks 5 MB.
-      </p>
+      <p className="mt-1 text-xs text-black/50">{helpText}</p>
     </div>
   );
 }

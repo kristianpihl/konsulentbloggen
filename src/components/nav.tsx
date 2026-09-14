@@ -8,12 +8,15 @@ export function Nav() {
         <Link href="/" className="text-lg font-semibold tracking-tight">
           {siteConfig.name}
         </Link>
-        <nav className="flex gap-6 text-sm text-black/70">
+        <nav className="flex items-center gap-6 text-sm text-black/70">
           <Link href="/blog" className="hover:text-black">
             Blogg
           </Link>
           <Link href="/om" className="hover:text-black">
             Om meg
+          </Link>
+          <Link href="/admin" className="text-black/40 hover:text-black">
+            Admin
           </Link>
         </nav>
       </div>

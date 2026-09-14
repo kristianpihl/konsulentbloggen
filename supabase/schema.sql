@@ -74,3 +74,51 @@ create policy "Admin kan slette artikkelbilder"
     bucket_id = 'post-images'
     and auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com'
   );
+
+-- Besøksstatistikk (sidevisninger og tid brukt per side).
+create table if not exists page_views (
+  id uuid primary key default gen_random_uuid(),
+  path text not null,
+  session_id text not null,
+  referrer text,
+  duration_seconds numeric,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists page_views_path_idx on page_views (path);
+create index if not exists page_views_created_at_idx on page_views (created_at desc);
+
+alter table page_views enable row level security;
+
+-- Ingen policy for "anon" med vilje — skriving skjer kun via
+-- server-ruten /api/track med service_role-nøkkelen.
+drop policy if exists "Admin kan lese besøksstatistikk" on page_views;
+create policy "Admin kan lese besøksstatistikk"
+  on page_views
+  for select
+  using (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com');
+
+-- Redigerbart hovedbilde på forsiden.
+create table if not exists site_settings (
+  id text primary key default 'default',
+  hero_image_url text,
+  updated_at timestamptz not null default now()
+);
+
+insert into site_settings (id) values ('default')
+on conflict (id) do nothing;
+
+alter table site_settings enable row level security;
+
+drop policy if exists "Alle kan lese sideinnstillinger" on site_settings;
+create policy "Alle kan lese sideinnstillinger"
+  on site_settings
+  for select
+  using (true);
+
+drop policy if exists "Admin kan oppdatere sideinnstillinger" on site_settings;
+create policy "Admin kan oppdatere sideinnstillinger"
+  on site_settings
+  for update
+  using (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com')
+  with check (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com');
