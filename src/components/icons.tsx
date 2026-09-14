@@ -157,6 +157,23 @@ export function HomeIcon({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
+export function PagesIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={className}
+      aria-hidden
+    >
+      <path d="M8 3h9a1 1 0 0 1 1 1v13" />
+      <path d="M6 6h9a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z" />
+      <path d="M8.5 11h4M8.5 14h4" />
+    </svg>
+  );
+}
+
 export function LogoutIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg

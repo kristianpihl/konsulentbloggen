@@ -6,11 +6,13 @@ import {
   ChartIcon,
   HomeIcon,
   LogoutIcon,
+  PagesIcon,
   PostsIcon,
 } from "@/components/icons";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Innlegg", icon: PostsIcon },
+  { href: "/admin/sider", label: "Sider", icon: PagesIcon },
   { href: "/admin/analytics", label: "Statistikk", icon: ChartIcon },
   { href: "/admin/settings", label: "Fremside", icon: HomeIcon },
 ] as const;
