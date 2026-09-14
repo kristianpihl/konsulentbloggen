@@ -105,3 +105,71 @@ export function LinkedInIcon({ className = "h-4 w-4" }: { className?: string }) 
     </svg>
   );
 }
+
+export function PostsIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={className}
+      aria-hidden
+    >
+      <path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+      <path d="M14 3v5h5" />
+      <path d="M9 13.5h6M9 17h6" />
+    </svg>
+  );
+}
+
+export function ChartIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={className}
+      aria-hidden
+    >
+      <path d="M4 21V10" />
+      <path d="M10 21V4" />
+      <path d="M16 21v-7" />
+      <path d="M4 21h16" />
+    </svg>
+  );
+}
+
+export function HomeIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={className}
+      aria-hidden
+    >
+      <path d="m4 10.5 8-6.5 8 6.5" />
+      <path d="M6 9.5V20h12V9.5" />
+    </svg>
+  );
+}
+
+export function LogoutIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={className}
+      aria-hidden
+    >
+      <path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3" />
+      <path d="m14 8 4 4-4 4" />
+      <path d="M18 12H9" />
+    </svg>
+  );
+}

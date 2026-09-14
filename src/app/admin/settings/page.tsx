@@ -8,7 +8,7 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Innstillinger</h1>
+      <h1 className="text-xl font-semibold">Fremside</h1>
       <p className="mt-1 text-sm text-black/60">
         Tilpass overordnede elementer på forsiden.
       </p>
