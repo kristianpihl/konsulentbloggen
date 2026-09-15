@@ -9,7 +9,8 @@ export const revalidate = 0;
 
 // Maks antall innlegg vist per liste på forsiden.
 // "Se alle →"-lenkene tar deg til sider uten denne begrensningen.
-const MAX_PREVIEW_POSTS = 5;
+const MAX_LATEST_POSTS = 5;
+const MAX_CATEGORY_POSTS = 3;
 
 // Sorterer etter antall sidevisninger (mest populære først). Innlegg uten
 // visningsdata ennå faller tilbake til nyeste-først, slik at ferske
@@ -31,7 +32,7 @@ export default async function HomePage() {
     getPostViewCounts(),
   ]);
   const [featuredPost, ...rest] = posts;
-  const latestPosts = rest.slice(0, MAX_PREVIEW_POSTS);
+  const latestPosts = rest.slice(0, MAX_LATEST_POSTS);
 
   return (
     <div>
@@ -106,7 +107,7 @@ export default async function HomePage() {
                       posts={sortByPopularity(
                         postsForCategory(posts, category),
                         viewCounts,
-                      ).slice(0, MAX_PREVIEW_POSTS)}
+                      ).slice(0, MAX_CATEGORY_POSTS)}
                       emptyLabel="Ingen innlegg i denne kategorien ennå."
                     />
                   </div>

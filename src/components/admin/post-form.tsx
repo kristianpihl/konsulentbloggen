@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { slugify } from "@/lib/slugify";
 import { CoverImageField } from "@/components/admin/cover-image-field";
+import { ContentEditor } from "@/components/admin/content-editor";
 import type { Post } from "@/types/post";
 import type { PostFormState } from "@/app/admin/actions";
 
@@ -65,19 +66,7 @@ export function PostForm({
 
       <CoverImageField initialUrl={post?.cover_image_url} />
 
-      <div>
-        <label htmlFor="content" className="block text-sm font-medium">
-          Innhold (Markdown)
-        </label>
-        <textarea
-          id="content"
-          name="content"
-          rows={16}
-          required
-          defaultValue={post?.content ?? ""}
-          className="mt-1 w-full rounded-md border border-black/15 px-3 py-2 font-mono text-sm outline-none focus:border-black/40"
-        />
-      </div>
+      <ContentEditor defaultValue={post?.content ?? ""} />
 
       <div>
         <label htmlFor="tags" className="block text-sm font-medium">

@@ -1,5 +1,8 @@
 export type PostStatus = "draft" | "published";
 
+// Maks antall tegn (inkludert mellomrom) i selve innleggsteksten.
+export const MAX_POST_CONTENT_LENGTH = 4500;
+
 export interface Post {
   id: string;
   slug: string;

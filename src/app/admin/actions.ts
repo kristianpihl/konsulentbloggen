@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/slugify";
+import { MAX_POST_CONTENT_LENGTH } from "@/types/post";
 import type { PostInput, PostStatus } from "@/types/post";
 
 export async function logout() {
@@ -63,6 +64,11 @@ export async function createPost(
   if (!input.title || !input.content || !input.slug) {
     return { error: "Tittel og innhold må fylles ut." };
   }
+  if (input.content.length > MAX_POST_CONTENT_LENGTH) {
+    return {
+      error: `Innholdet er for langt (maks ${MAX_POST_CONTENT_LENGTH} tegn).`,
+    };
+  }
 
   const supabase = await createClient();
   const {
@@ -99,6 +105,11 @@ export async function updatePost(
 
   if (!input.title || !input.content || !input.slug) {
     return { error: "Tittel og innhold må fylles ut." };
+  }
+  if (input.content.length > MAX_POST_CONTENT_LENGTH) {
+    return {
+      error: `Innholdet er for langt (maks ${MAX_POST_CONTENT_LENGTH} tegn).`,
+    };
   }
 
   const supabase = await createClient();
