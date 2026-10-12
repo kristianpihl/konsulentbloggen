@@ -2,10 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChartIcon, LogoutIcon, PagesIcon, PostsIcon } from "@/components/icons";
+import {
+  ChartIcon,
+  LogoutIcon,
+  PagesIcon,
+  PostsIcon,
+  SparklesIcon,
+} from "@/components/icons";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Innlegg", icon: PostsIcon },
+  { href: "/admin/bygger", label: "Innholdsbygger", icon: SparklesIcon },
   { href: "/admin/sider", label: "Sider", icon: PagesIcon },
   { href: "/admin/analytics", label: "Statistikk", icon: ChartIcon },
 ] as const;

@@ -174,3 +174,21 @@ export function LogoutIcon({ className = "h-4 w-4" }: { className?: string }) {
     </svg>
   );
 }
+
+export function SparklesIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={className}
+      aria-hidden
+    >
+      <path d="M10 4v4M8 6h4" />
+      <path d="m10 11 1.2 3.3L14.5 15.5l-3.3 1.2L10 20l-1.2-3.3L5.5 15.5l3.3-1.2Z" />
+      <path d="M18 4v3M16.5 5.5h3" />
+      <path d="M18 14v3M16.5 15.5h3" />
+    </svg>
+  );
+}

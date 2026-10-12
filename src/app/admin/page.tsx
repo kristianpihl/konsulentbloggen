@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllPostsForAdmin } from "@/lib/posts";
 import { formatDate } from "@/lib/slugify";
+import { formatDateTimeOslo, isInFuture } from "@/lib/schedule";
 import { AdminItemRow } from "@/components/admin/admin-item-row";
 import { deletePost } from "./actions";
 
@@ -34,18 +35,27 @@ export default async function AdminDashboard() {
             deleteAction={deletePost.bind(null, post.id)}
             deleteConfirmMessage="Slette dette innlegget? Dette kan ikke angres."
             meta={
-              <>
-                <span
-                  className={
-                    post.status === "published"
-                      ? "text-green-700"
-                      : "text-amber-700"
-                  }
-                >
-                  {post.status === "published" ? "Publisert" : "Utkast"}
-                </span>
-                {post.published_at && <> · {formatDate(post.published_at)}</>}
-              </>
+              post.status === "published" &&
+              post.published_at &&
+              isInFuture(post.published_at) ? (
+                <>
+                  <span className="text-blue-700">Planlagt</span> ·{" "}
+                  {formatDateTimeOslo(post.published_at)}
+                </>
+              ) : (
+                <>
+                  <span
+                    className={
+                      post.status === "published"
+                        ? "text-green-700"
+                        : "text-amber-700"
+                    }
+                  >
+                    {post.status === "published" ? "Publisert" : "Utkast"}
+                  </span>
+                  {post.published_at && <> · {formatDate(post.published_at)}</>}
+                </>
+              )
             }
           />
         ))}

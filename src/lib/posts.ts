@@ -1,13 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Post } from "@/types/post";
 
-// Hent alle publiserte innlegg, nyeste først. Brukes på forsiden og bloggsiden.
+// Hent alle publiserte innlegg, nyeste først. Planlagte innlegg (publiseringstid
+// frem i tid) skjules til tidspunktet er passert. Brukes på forsiden og bloggsiden.
 export async function getPublishedPosts(): Promise<Post[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("posts")
     .select("*")
     .eq("status", "published")
+    .lte("published_at", new Date().toISOString())
     .order("published_at", { ascending: false });
 
   if (error) {
@@ -28,6 +30,7 @@ export async function getPublishedPostBySlug(
     .select("*")
     .eq("slug", slug)
     .eq("status", "published")
+    .lte("published_at", new Date().toISOString())
     .maybeSingle();
 
   if (error) {

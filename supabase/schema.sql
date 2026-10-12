@@ -25,7 +25,7 @@ drop policy if exists "Publiserte innlegg er offentlig lesbare" on posts;
 create policy "Publiserte innlegg er offentlig lesbare"
   on posts
   for select
-  using (status = 'published');
+  using (status = 'published' and published_at <= now());
 
 -- Kun den innloggede admin-brukeren (identifisert på e-post) kan
 -- lese utkast og opprette/endre/slette innlegg.
@@ -166,3 +166,19 @@ create policy "Admin kan lese delingsstatistikk"
   on post_shares
   for select
   using (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com');
+
+-- Prinsipper (stilguide) som innholdsbyggeren skriver artikler etter.
+create table if not exists style_guide (
+  id text primary key default 'default',
+  principles text not null default '',
+  updated_at timestamptz not null default now()
+);
+
+alter table style_guide enable row level security;
+
+drop policy if exists "Admin har full tilgang til stilguide" on style_guide;
+create policy "Admin har full tilgang til stilguide"
+  on style_guide
+  for all
+  using (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com')
+  with check (auth.jwt() ->> 'email' = 'kristianpihl01@gmail.com');

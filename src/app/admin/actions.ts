@@ -5,6 +5,11 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/slugify";
 import { MAX_POST_CONTENT_LENGTH } from "@/types/post";
+import {
+  isoToOsloLocal,
+  nextFreeThursdaySlot,
+  osloLocalToDate,
+} from "@/lib/schedule";
 import type { PostInput, PostStatus } from "@/types/post";
 
 export async function logout() {
@@ -14,6 +19,40 @@ export async function logout() {
 }
 
 export type PostFormState = { error: string; success?: boolean } | null;
+
+// Finner neste ledige torsdag kl. 09:00 (norsk tid) som ikke allerede har et
+// planlagt innlegg. Returnerer verdi til et datetime-local-felt, eller tom streng.
+export async function nextFreeSlot(excludeId?: string): Promise<string> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return "";
+
+  const nowIso = new Date().toISOString();
+  let query = supabase
+    .from("posts")
+    .select("published_at")
+    .eq("status", "published")
+    .gt("published_at", nowIso);
+  if (excludeId) query = query.neq("id", excludeId);
+
+  const { data } = await query;
+  const taken = (data ?? [])
+    .map((row) => row.published_at)
+    .filter((v): v is string => typeof v === "string");
+
+  return nextFreeThursdaySlot(new Date(), taken);
+}
+
+// Tolker publiseringstidspunktet fra skjemaet (norsk tid). Tom verdi = ingen
+// bestemt tid. Returnerer null hvis verdien er ugyldig.
+function parsePublishAt(formData: FormData): { value: Date | null; valid: boolean; raw: string } {
+  const raw = String(formData.get("publish_at") ?? "").trim();
+  if (!raw) return { value: null, valid: true, raw };
+  const value = osloLocalToDate(raw);
+  return { value, valid: value !== null, raw };
+}
 
 function parsePostInput(formData: FormData): PostInput {
   const title = String(formData.get("title") ?? "").trim();
@@ -70,6 +109,11 @@ export async function createPost(
     };
   }
 
+  const publishAt = parsePublishAt(formData);
+  if (!publishAt.valid) {
+    return { error: "Ugyldig publiseringstidspunkt." };
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -82,7 +126,9 @@ export async function createPost(
       ...input,
       cover_image_url: input.cover_image_url || null,
       published_at:
-        input.status === "published" ? new Date().toISOString() : null,
+        input.status === "published"
+          ? (publishAt.value ?? new Date()).toISOString()
+          : null,
     })
     .select("id")
     .single();
@@ -112,6 +158,11 @@ export async function updatePost(
     };
   }
 
+  const publishAt = parsePublishAt(formData);
+  if (!publishAt.valid) {
+    return { error: "Ugyldig publiseringstidspunkt." };
+  }
+
   const supabase = await createClient();
   const { data: existing } = await supabase
     .from("posts")
@@ -119,10 +170,17 @@ export async function updatePost(
     .eq("id", id)
     .maybeSingle();
 
-  const published_at =
-    input.status === "published"
-      ? (existing?.published_at ?? new Date().toISOString())
-      : null;
+  // Uendret tidspunkt i skjemaet beholder den eksakte lagrede verdien.
+  const unchanged =
+    existing?.published_at &&
+    publishAt.raw === isoToOsloLocal(existing.published_at);
+
+  let published_at: string | null = null;
+  if (input.status === "published") {
+    if (unchanged) published_at = existing.published_at;
+    else if (publishAt.value) published_at = publishAt.value.toISOString();
+    else published_at = existing?.published_at ?? new Date().toISOString();
+  }
 
   const { error } = await supabase
     .from("posts")
