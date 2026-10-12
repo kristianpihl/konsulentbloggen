@@ -25,11 +25,18 @@ function firstSentence(text: string, max: number): string {
   return trimmed.length > max ? `${trimmed.slice(0, max - 1).trimEnd()}…` : trimmed;
 }
 
-function clampContent(content: string): string {
-  if (content.length <= MAX_POST_CONTENT_LENGTH) return content;
-  const cut = content.slice(0, MAX_POST_CONTENT_LENGTH);
-  const lastBreak = cut.lastIndexOf("\n\n");
-  return (lastBreak > MAX_POST_CONTENT_LENGTH * 0.6 ? cut.slice(0, lastBreak) : cut).trimEnd();
+const ARTICLE_ENDING = "## Hva tenker du? 💬";
+
+// Klipper brødteksten slik at avslutningen alltid får plass innenfor makslengden.
+function clampContent(body: string): string {
+  const room = MAX_POST_CONTENT_LENGTH - ARTICLE_ENDING.length - 2;
+  let text = body;
+  if (text.length > room) {
+    const cut = text.slice(0, room);
+    const lastBreak = cut.lastIndexOf("\n\n");
+    text = (lastBreak > room * 0.6 ? cut.slice(0, lastBreak) : cut).trimEnd();
+  }
+  return `${text}\n\n${ARTICLE_ENDING}`;
 }
 
 // Enkel mal: problem først, deretter løsning. Brukes til generatoren er koblet
@@ -38,7 +45,7 @@ function templateArticle({ problem, solution }: BuilderInput): GeneratedArticle 
   return {
     title: firstSentence(problem, 90),
     excerpt: firstSentence(problem, 160),
-    content: clampContent(`${problem}\n\n## Hva kan du gjøre?\n\n${solution}`),
+    content: clampContent(`${problem}\n\n## Hva kan du gjøre? 💡\n\n${solution}`),
   };
 }
 

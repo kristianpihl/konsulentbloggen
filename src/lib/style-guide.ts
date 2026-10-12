@@ -3,19 +3,25 @@ import { createClient } from "@/lib/supabase/server";
 // Brukes til innholdsbyggeren er fylt ut med dine egne prinsipper (eller hvis
 // databasetabellen ikke finnes ennå). Rediger dem under Innholdsbygger → Prinsipper.
 export const DEFAULT_PRINCIPLES = `Struktur
-- Hver artikkel starter med et konkret problem eller en gjenkjennelig situasjon.
-- Deretter kommer løsningen: hva man kan gjøre, steg for steg eller som noen få tydelige grep.
-- Avslutt kort, med det viktigste å ta med seg.
+- Alltid problemet eller situasjonen først, deretter løsningen.
+- Artikkelen bør være en fortelling.
+- Avslutt alltid artikkelen med «Hva tenker du?»
+
+Lengde
+- Aldri mer enn 4500 tegn inkludert mellomrom. Helst mindre.
+
+Form
+- Bruk korte avsnitt, mellomtitler og punktlister.
+- Bruk emojis i teksten, fordi det er gøyere å lese.
+- Alltid et illustrasjonsbilde til artikkelen. Bilder bryter opp teksten.
 
 Tone og språk
-- Norsk bokmål. Praktisk, jordnær og direkte. Uformell tone, men profesjonell.
-- Korte avsnitt og gjerne underoverskrifter. Unngå fagsjargong uten forklaring.
+- Norsk bokmål. Litt leken og morsom, men fortsatt profesjonell.
 - Skriv fra min erfaring som produktleder, teamleder og konsulent.
 
 Innhold
 - Bygg kun på det jeg har skrevet inn som problem og løsning.
-- Ikke finn på fakta, tall, statistikk, sitater eller konkrete kundecaser.
-- Maks 4500 tegn inkludert mellomrom.`;
+- Ikke finn på fakta, tall, statistikk, sitater eller konkrete kundecaser.`;
 
 export async function getStyleGuide(): Promise<string> {
   const supabase = await createClient();
