@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/slugify";
 import { MAX_POST_CONTENT_LENGTH } from "@/types/post";
 import {
+  isInFuture,
   isoToOsloLocal,
   nextFreeThursdaySlot,
   osloLocalToDate,
@@ -175,9 +176,18 @@ export async function updatePost(
     existing?.published_at &&
     publishAt.raw === isoToOsloLocal(existing.published_at);
 
+  // «Publiser nå»: et allerede utgitt innlegg beholder datoen sin, mens et
+  // planlagt (eller nytt) innlegg får tidspunktet nå.
+  const publishNow = formData.get("publish_now") === "1";
+
   let published_at: string | null = null;
   if (input.status === "published") {
-    if (unchanged) published_at = existing.published_at;
+    if (publishNow) {
+      published_at =
+        existing?.published_at && !isInFuture(existing.published_at)
+          ? existing.published_at
+          : new Date().toISOString();
+    } else if (unchanged) published_at = existing.published_at;
     else if (publishAt.value) published_at = publishAt.value.toISOString();
     else published_at = existing?.published_at ?? new Date().toISOString();
   }
