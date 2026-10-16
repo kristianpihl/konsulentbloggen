@@ -1,4 +1,4 @@
-# Når produktlederen har lite tid og sitter et annet sted 🧭
+## Når produktlederen har lite tid og sitter et annet sted 🧭
 
 **Som teamlead hos en kunde oppdaget jeg at produktleder hadde lite tid til teamet. Vedkommende satt dessuten fysisk borte fra oss. Jeg ble usikker på hvordan jeg skulle løse det, så jeg endte opp med tre enkle grep.**
 
@@ -14,15 +14,15 @@ Så hva gjør man når den som skal gi retning har lite tid og dessuten sitter e
 
 Jeg endte opp med disse:
 
-### 1. Reis dit hen 🧳
+## 1. Reis dit hen 🧳
 **Grepet:** Jevnlig reise til der produktleder satt.
 **Poenget:** Skape relasjoner. Avstand blir mindre når man kjenner hverandre.
 
-### 2. Avklar hvilke møter 🗓️
+## 2. Avklar hvilke møter 🗓️
 **Grepet:** Finne ut hvilke møter produktleder skulle være med på, og hvilke vedkommende kunne droppe.
 **Poenget:** Når tiden er knapp, bør den brukes der den teller.
 
-### 3. Sett opp en TRIO ⚡
+## 3. Sett opp en TRIO ⚡
 **Grepet:** En TRIO for raske beslutninger: en liten sammensetning der produktleder, teamleder og tech lead jobber sammen.
 **Poenget:** Slippe å vente på svar når teamet trenger å komme videre.
 

@@ -1,4 +1,4 @@
-# 15 minutter, 30 minutter eller ingen? Stand-upen som volumknapp 🎚️
+## 15 minutter, 30 minutter eller ingen? Stand-upen som volumknapp 🎚️
 
 **Jeg var usikker på hvor mye stand-up teamet mitt egentlig trengte: 15 minutter hver dag, 30, eller ikke hver dag? Svaret ble at det ikke finnes ett riktig svar. Men det finnes en god huskeregel.**
 
@@ -22,15 +22,15 @@ Så hva gjør man?
 
 Selv er jeg mest vant med 15 minutter hver dag. Det er mitt utgangspunkt. Derfra skrur jeg opp eller ned etter hva teamet trenger.
 
-### Oppgaven er rett frem 🚶
+## Oppgaven er rett frem 🚶
 **Situasjonen:** Teamet jobber med noe som er enkelt og tydelig.
 **Grepet:** Skru ned. Da trenger man ikke synce så lenge.
 
-### Oppgaven er kompleks 🧩
+## Oppgaven er kompleks 🧩
 **Situasjonen:** Teamet står overfor noe komplisert.
 **Grepet:** Skru opp. Jo mer komplekst, desto mer må man snakke sammen.
 
-### Teamet er hybrid 🏠🏢
+## Teamet er hybrid 🏠🏢
 **Situasjonen:** Dere sitter ikke sammen fysisk hver dag.
 **Grepet:** Legg inn litt slack, altså litt ekstra rom til å prate. Det kan være 5–10 minutter ekstra på hver stand-up, eller én litt lengre stand-up i uka.
 

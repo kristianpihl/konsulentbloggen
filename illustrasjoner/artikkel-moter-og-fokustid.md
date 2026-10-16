@@ -1,4 +1,4 @@
-# For mange møter? Kanskje det er fokustiden som er for liten 🍰
+## For mange møter? Kanskje det er fokustiden som er for liten 🍰
 
 **Teamet klaget på for mange møter i iterasjonen. Vi prøvde ulike rytmer og var alle litt usikre på hva som var best. Det som hjalp var ikke bare å kutte møter, men å gi teamet mer fokustid.**
 
@@ -10,10 +10,10 @@ Vi testet ut ulike rytmer. Skulle iterasjonene, eller «sprintene», være to el
 
 ## To uker eller tre? 🗓️
 
-### Først: 2-ukers sprinter
+## Først: 2-ukers sprinter
 **Hva skjedde:** Vi merket at møtene spiste opp mer av tiden.
 
-### Deretter: 3-ukers sprinter
+## Deretter: 3-ukers sprinter
 **Hva skjedde:** Teamet fikk mer fokustid, og møtene tok opp mindre av tiden i forhold til fokustiden.
 
 ## Vi kunne ikke bare kutte møtene 🤝

@@ -13,6 +13,7 @@ Lengde
 
 Form
 - Bruk korte avsnitt, mellomtitler og punktlister.
+- All tekst som skal være en overskrift, også tittelen, skrives med «## » foran (aldri «#» eller «###»). Da blir den fet.
 - Bruk emojis i teksten, fordi det er gøyere å lese.
 - Alltid en illustrasjon til artikkelen. Jeg beskriver hva den skal inneholde.
 
