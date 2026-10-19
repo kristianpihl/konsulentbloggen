@@ -13,6 +13,9 @@ export async function Nav() {
           {siteConfig.name}
         </Link>
         <nav className="flex items-center gap-6 text-sm text-black/70">
+          <Link href="/maler" className="hover:text-black">
+            Maler og verktøy
+          </Link>
           {pages.map((page) => (
             <Link
               key={page.id}

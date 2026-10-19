@@ -21,6 +21,7 @@ export interface StaticPageInput {
 // siden aldri ville blitt vist.
 export const RESERVED_PAGE_SLUGS = [
   "blog",
+  "maler",
   "kategori",
   "sok",
   "nyhetsbrev",

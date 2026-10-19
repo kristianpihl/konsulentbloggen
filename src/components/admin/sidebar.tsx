@@ -8,11 +8,13 @@ import {
   PagesIcon,
   PostsIcon,
   SparklesIcon,
+  ToolboxIcon,
 } from "@/components/icons";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Innlegg", icon: PostsIcon },
   { href: "/admin/bygger", label: "Innholdsbygger", icon: SparklesIcon },
+  { href: "/admin/maler", label: "Maler og verktøy", icon: ToolboxIcon },
   { href: "/admin/sider", label: "Sider", icon: PagesIcon },
   { href: "/admin/analytics", label: "Statistikk", icon: ChartIcon },
 ] as const;

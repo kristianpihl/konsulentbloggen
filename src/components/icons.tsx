@@ -192,3 +192,38 @@ export function SparklesIcon({ className = "h-4 w-4" }: { className?: string }) 
     </svg>
   );
 }
+
+export function DownloadIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={className}
+      aria-hidden
+    >
+      <path d="M12 4v11" />
+      <path d="m7.5 11 4.5 4.5 4.5-4.5" />
+      <path d="M5 19h14" />
+    </svg>
+  );
+}
+
+export function ToolboxIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={className}
+      aria-hidden
+    >
+      <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+      <rect x="3" y="7" width="18" height="12" rx="2" />
+      <path d="M3 13h18" />
+      <path d="M11 13v2h2v-2" />
+    </svg>
+  );
+}
