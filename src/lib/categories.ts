@@ -11,6 +11,9 @@ export const CATEGORIES = [
   "Digitalisering",
   "Endringsledelse",
   "Karriere",
+  "Coaching og fasilitering",
+  "Arkitektur",
+  "KI",
 ] as const;
 
 // URL-vennlig versjon av kategorinavnet, brukt i /kategori/[slug].
