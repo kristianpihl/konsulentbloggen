@@ -18,11 +18,8 @@ export default async function ResourcesPage(props: PageProps<"/maler">) {
 
   const all = await getPublishedResources();
 
-  // Kun kategorier som faktisk har noe publisert vises som filter.
-  const usedCategories = CATEGORIES.filter((category) =>
-    all.some((resource) => resource.category === category),
-  );
-  const activeCategory = usedCategories.find((category) => category === kategoriParam);
+  // Filtrene er de samme kategoriene som på artiklene.
+  const activeCategory = CATEGORIES.find((category) => category === kategoriParam);
   const resources = activeCategory
     ? all.filter((resource) => resource.category === activeCategory)
     : all;
@@ -35,10 +32,9 @@ export default async function ResourcesPage(props: PageProps<"/maler">) {
         hvordan de brukes, og last dem ned.
       </p>
 
-      {usedCategories.length > 0 && (
-        <div className="mt-8 flex flex-wrap gap-2 text-sm">
+      <div className="mt-8 flex flex-wrap gap-2 text-sm">
           <FilterLink href="/maler" active={!activeCategory} label="Alle" />
-          {usedCategories.map((category) => (
+          {CATEGORIES.map((category) => (
             <FilterLink
               key={category}
               href={`/maler?kategori=${encodeURIComponent(category)}`}
@@ -46,8 +42,7 @@ export default async function ResourcesPage(props: PageProps<"/maler">) {
               label={category}
             />
           ))}
-        </div>
-      )}
+      </div>
 
       <div className="mt-10">
         {resources.length === 0 ? (
