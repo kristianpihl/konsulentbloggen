@@ -47,7 +47,7 @@ export default async function HomePage() {
                   <img
                     src={featuredPost.cover_image_url}
                     alt=""
-                    className="h-64 w-full rounded-lg border border-black/10 object-cover sm:h-80 lg:h-[28rem]"
+                    className="h-auto w-full rounded-lg border border-black/10"
                   />
                 ) : (
                   <div className="flex h-64 w-full items-center justify-center rounded-lg border border-dashed border-black/15 text-center text-sm text-black/40 sm:h-80 lg:h-[28rem]">
