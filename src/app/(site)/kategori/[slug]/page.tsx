@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CategoryIcon } from "@/components/category-icons";
 import { PostCard } from "@/components/post-card";
 import { findCategoryBySlug, postsForCategory } from "@/lib/categories";
 import { getPublishedPosts } from "@/lib/posts";
@@ -28,7 +29,10 @@ export default async function CategoryPage(
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
       <p className="text-sm text-black/50">Kategori</p>
-      <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+      <h1 className="mt-1 flex items-center gap-3 text-2xl font-semibold tracking-tight">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-black text-white">
+          <CategoryIcon category={category} className="h-5 w-5" />
+        </span>
         {category}
       </h1>
 
