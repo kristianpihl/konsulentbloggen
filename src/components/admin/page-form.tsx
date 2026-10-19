@@ -64,6 +64,16 @@ export function PageForm({
         <label htmlFor="content" className="block text-sm font-medium">
           Innhold (Markdown)
         </label>
+        {page?.slug === "om" && (
+          <p className="mt-1 text-xs text-black/60">
+            Teksten før første <code>##</code> er ingressen ved siden av bildet.
+            Hver <code>##</code>-overskrift med samme navn som et kompetanseområde
+            (Produktledelse, Teamledelse, Coaching og fasilitering, KI,
+            Forretningsutvikling, Endringsledelse, Digitalisering, Arkitektur) blir
+            en bar i menyen. Andre <code>##</code>-seksjoner vises som vanlig tekst
+            under menyen.
+          </p>
+        )}
         <textarea
           id="content"
           name="content"

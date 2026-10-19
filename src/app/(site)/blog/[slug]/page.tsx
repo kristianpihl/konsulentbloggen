@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { ArticleActions } from "@/components/article-actions";
 import { RelatedResourceCard } from "@/components/resource-card";
-import { formatDate } from "@/lib/slugify";
 import { getPublishedPostBySlug } from "@/lib/posts";
 import { getPublishedResourceById } from "@/lib/resources";
 import { siteConfig } from "@/lib/site-config";
@@ -37,13 +36,6 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
     ? await getPublishedResourceById(post.resource_id)
     : null;
 
-  // Vis "Oppdatert" kun hvis innlegget faktisk er endret en god stund
-  // etter at det ble opprettet (ikke bare avrundingsstøy fra lagring).
-  const wasUpdated =
-    new Date(post.updated_at).getTime() -
-      new Date(post.created_at).getTime() >
-    60_000;
-
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
       <h1 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
@@ -71,21 +63,6 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
             Tekst:
           </span>{" "}
           {siteConfig.name}
-        </p>
-        <p>
-          <span className="font-semibold uppercase tracking-wide text-black/40">
-            Publisert:
-          </span>{" "}
-          {formatDate(post.published_at)}
-          {wasUpdated && (
-            <>
-              <span className="mx-2 text-black/30">·</span>
-              <span className="font-semibold uppercase tracking-wide text-black/40">
-                Oppdatert:
-              </span>{" "}
-              {formatDate(post.updated_at)}
-            </>
-          )}
         </p>
         {post.tags.length > 0 && (
           <p>

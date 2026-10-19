@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CategoryIcon } from "@/components/category-icons";
 import { CompactPostList } from "@/components/compact-post-list";
 import { CATEGORIES, categorySlug, postsForCategory } from "@/lib/categories";
 import { getPostViewCounts } from "@/lib/analytics";
@@ -94,7 +95,12 @@ export default async function HomePage() {
               {CATEGORIES.map((category) => (
                 <div key={category}>
                   <div className="flex items-baseline justify-between">
-                    <h3 className="text-base font-semibold">{category}</h3>
+                    <h3 className="flex items-center gap-2.5 text-base font-semibold">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-black text-white">
+                        <CategoryIcon category={category} className="h-4 w-4" />
+                      </span>
+                      {category}
+                    </h3>
                     <Link
                       href={`/kategori/${categorySlug(category)}`}
                       className="text-sm text-black/60 hover:text-black"

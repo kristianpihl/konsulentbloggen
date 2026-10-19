@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { formatDate } from "@/lib/slugify";
 import type { Post } from "@/types/post";
 
 export function PostCard({ post }: { post: Post }) {
@@ -17,8 +16,7 @@ export function PostCard({ post }: { post: Post }) {
           <div className="h-28 w-36 shrink-0 rounded-md border border-black/10 bg-black/5 sm:h-32 sm:w-44" />
         )}
         <div className="min-w-0">
-          <p className="text-sm text-black/50">{formatDate(post.published_at)}</p>
-          <h2 className="mt-1 font-semibold tracking-tight group-hover:underline">
+          <h2 className="font-semibold tracking-tight group-hover:underline">
             {post.title}
           </h2>
           {post.excerpt && (

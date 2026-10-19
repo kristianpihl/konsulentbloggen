@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import { AboutPage } from "@/components/about-page";
+import { ABOUT_SLUG } from "@/lib/about";
 import { getPageBySlug } from "@/lib/pages";
 
 export const revalidate = 0;
@@ -26,6 +28,8 @@ export default async function StaticPage(props: PageProps<"/[slug]">) {
   const page = await getPageBySlug(slug);
 
   if (!page) notFound();
+
+  if (page.slug === ABOUT_SLUG) return <AboutPage page={page} />;
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
