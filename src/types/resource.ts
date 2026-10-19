@@ -26,6 +26,8 @@ export interface Resource {
   content: string;
   kind: ResourceKind;
   cover_image_url: string | null;
+  best_for: string[];
+  key_features: string[];
   files: ResourceFile[];
   status: ResourceStatus;
   published_at: string | null;
@@ -68,4 +70,26 @@ export function formatFileSize(bytes: number): string {
 export function downloadUrl(file: ResourceFile): string {
   const separator = file.url.includes("?") ? "&" : "?";
   return `${file.url}${separator}download=${encodeURIComponent(file.name)}`;
+}
+
+const FILE_TYPE_LABELS: Record<string, string> = {
+  pptx: "PowerPoint",
+  ppt: "PowerPoint",
+  pdf: "PDF",
+  docx: "Word",
+  doc: "Word",
+  xlsx: "Excel",
+  xls: "Excel",
+  csv: "CSV",
+  zip: "ZIP",
+  png: "bilde",
+  jpg: "bilde",
+  jpeg: "bilde",
+  svg: "bilde",
+};
+
+// Kort navn på filtypen, for eksempel «PowerPoint» eller «PDF».
+export function fileTypeLabel(file: ResourceFile): string {
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
+  return FILE_TYPE_LABELS[extension] ?? (extension ? extension.toUpperCase() : "fil");
 }

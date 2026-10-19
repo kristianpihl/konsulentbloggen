@@ -22,9 +22,9 @@ export default async function ResourcesPage(props: PageProps<"/maler">) {
   const resources = await getPublishedResources(activeKind);
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-16">
-      <h1 className="text-2xl font-semibold tracking-tight">Maler og verktøy</h1>
-      <p className="mt-2 max-w-2xl text-black/60">
+    <div className="mx-auto max-w-6xl px-6 py-16">
+      <h1 className="text-4xl font-extrabold tracking-tight">Maler og verktøy</h1>
+      <p className="mt-3 max-w-2xl text-lg text-black/65">
         Maler og verktøy jeg bruker i arbeidet med produkt, team og endring. Les
         hvordan de brukes, og last dem ned.
       </p>
@@ -45,7 +45,7 @@ export default async function ResourcesPage(props: PageProps<"/maler">) {
         {resources.length === 0 ? (
           <p className="text-black/50">Ingenting publisert her ennå.</p>
         ) : (
-          <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {resources.map((resource) => (
               <ResourceCard key={resource.id} resource={resource} />
             ))}

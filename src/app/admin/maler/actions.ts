@@ -24,6 +24,8 @@ interface ResourceInput {
   content: string;
   kind: ResourceKind;
   cover_image_url: string;
+  best_for: string[];
+  key_features: string[];
   files: ResourceFile[];
   status: ResourceStatus;
 }
@@ -51,6 +53,16 @@ function parseFiles(raw: string): ResourceFile[] {
   }
 }
 
+// Én verdi per linje, maks 8 stk på maks 80 tegn.
+function parseLines(raw: string): string[] {
+  return raw
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.slice(0, 80))
+    .slice(0, 8);
+}
+
 function parseInput(formData: FormData): ResourceInput {
   const title = String(formData.get("title") ?? "").trim();
   const slugRaw = String(formData.get("slug") ?? "").trim();
@@ -64,6 +76,8 @@ function parseInput(formData: FormData): ResourceInput {
     content: String(formData.get("content") ?? ""),
     kind: kindRaw === "verktoy" ? "verktoy" : "mal",
     cover_image_url: String(formData.get("cover_image_url") ?? "").trim(),
+    best_for: parseLines(String(formData.get("best_for") ?? "")),
+    key_features: parseLines(String(formData.get("key_features") ?? "")),
     files: parseFiles(String(formData.get("files") ?? "[]")),
     status: statusRaw === "published" ? "published" : "draft",
   };
@@ -85,6 +99,9 @@ function errorMessage(error: { code?: string; message: string }): string {
   }
   if (error.code === "42P01") {
     return "Tabellen finnes ikke ennå. Kjør migrasjon 011_resources.sql i Supabase.";
+  }
+  if (/best_for|key_features/.test(error.message)) {
+    return "Kolonnene mangler. Kjør migrasjon 012_resources_extras.sql i Supabase.";
   }
   return error.message;
 }

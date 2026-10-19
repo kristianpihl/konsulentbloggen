@@ -117,6 +117,35 @@ export function ResourceForm({
         </p>
       </div>
 
+      <div className="grid gap-6 sm:grid-cols-2">
+        <div>
+          <label htmlFor="best_for" className="block text-sm font-medium">
+            Passer best for
+          </label>
+          <textarea
+            id="best_for"
+            name="best_for"
+            rows={4}
+            defaultValue={(resource?.best_for ?? []).join("\n")}
+            className="mt-1 w-full rounded-md border border-black/15 px-3 py-2 text-sm outline-none focus:border-black/40"
+          />
+          <p className="mt-1 text-xs text-black/50">Én per linje, for eksempel «Rekruttering».</p>
+        </div>
+        <div>
+          <label htmlFor="key_features" className="block text-sm font-medium">
+            Nøkkelfunksjoner
+          </label>
+          <textarea
+            id="key_features"
+            name="key_features"
+            rows={4}
+            defaultValue={(resource?.key_features ?? []).join("\n")}
+            className="mt-1 w-full rounded-md border border-black/15 px-3 py-2 text-sm outline-none focus:border-black/40"
+          />
+          <p className="mt-1 text-xs text-black/50">Én per linje, for eksempel «Team-kart».</p>
+        </div>
+      </div>
+
       <FileAttachmentsField initialFiles={resource?.files} />
 
       <div>
