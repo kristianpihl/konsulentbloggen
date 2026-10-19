@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { ToolboxIcon } from "@/components/icons";
+import { CategoryIcon } from "@/components/category-icons";
 import type { Resource } from "@/types/resource";
 
 export function ResourceBadge({ category }: { category: string | null }) {
   return (
     <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-black/55">
       <span className="flex h-7 w-7 items-center justify-center rounded-md bg-black text-white">
-        <ToolboxIcon className="h-4 w-4" />
+        <CategoryIcon category={category} className="h-4 w-4" />
       </span>
       {category ?? "Mal og verktøy"}
     </span>
