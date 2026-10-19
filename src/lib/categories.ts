@@ -7,13 +7,13 @@ import type { Post } from "@/types/post";
 export const CATEGORIES = [
   "Produktledelse",
   "Teamledelse",
+  "Coaching og fasilitering",
+  "KI",
   "Forretningsutvikling",
   "Digitalisering",
   "Endringsledelse",
-  "Karriere",
-  "Coaching og fasilitering",
   "Arkitektur",
-  "KI",
+  "Karriere",
 ] as const;
 
 // URL-vennlig versjon av kategorinavnet, brukt i /kategori/[slug].
