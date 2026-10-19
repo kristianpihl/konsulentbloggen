@@ -13,10 +13,13 @@ export function PostForm({
   action,
   post,
   submitLabel,
+  resourceOptions,
 }: {
   action: (prevState: PostFormState, formData: FormData) => Promise<PostFormState>;
   post?: Post;
   submitLabel: string;
+  // Maler og verktøy man kan lenke til. null = funksjonen er ikke klar ennå.
+  resourceOptions?: { id: string; title: string }[] | null;
 }) {
   const [state, formAction, pending] = useActionState(action, null);
   const [title, setTitle] = useState(post?.title ?? "");
@@ -102,6 +105,31 @@ export function PostForm({
           className="mt-1 w-full rounded-md border border-black/15 px-3 py-2 text-sm outline-none focus:border-black/40"
         />
       </div>
+
+      {resourceOptions && (
+        <div>
+          <label htmlFor="resource_id" className="block text-sm font-medium">
+            Relatert mal eller verktøy
+          </label>
+          <select
+            id="resource_id"
+            name="resource_id"
+            defaultValue={post?.resource_id ?? ""}
+            className="mt-1 w-full rounded-md border border-black/15 px-3 py-2 text-sm outline-none focus:border-black/40"
+          >
+            <option value="">Ingen</option>
+            {resourceOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.title}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-black/50">
+            Valgfritt. Vises som en lenke under artikkelen, og artikkelen vises
+            igjen på siden til malen eller verktøyet.
+          </p>
+        </div>
+      )}
 
       <fieldset>
         <legend className="block text-sm font-medium">Publisering</legend>

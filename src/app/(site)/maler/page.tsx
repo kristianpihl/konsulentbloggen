@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ResourceCard } from "@/components/resource-card";
+import { CATEGORIES } from "@/lib/categories";
 import { getPublishedResources } from "@/lib/resources";
-import { RESOURCE_KINDS } from "@/types/resource";
-import type { ResourceKind } from "@/types/resource";
 
 export const revalidate = 0;
 
@@ -14,12 +13,19 @@ export const metadata: Metadata = {
 };
 
 export default async function ResourcesPage(props: PageProps<"/maler">) {
-  const { type } = await props.searchParams;
-  const typeParam = Array.isArray(type) ? type[0] : type;
-  const activeKind = RESOURCE_KINDS.find((item) => item.value === typeParam)
-    ?.value as ResourceKind | undefined;
+  const { kategori } = await props.searchParams;
+  const kategoriParam = Array.isArray(kategori) ? kategori[0] : kategori;
 
-  const resources = await getPublishedResources(activeKind);
+  const all = await getPublishedResources();
+
+  // Kun kategorier som faktisk har noe publisert vises som filter.
+  const usedCategories = CATEGORIES.filter((category) =>
+    all.some((resource) => resource.category === category),
+  );
+  const activeCategory = usedCategories.find((category) => category === kategoriParam);
+  const resources = activeCategory
+    ? all.filter((resource) => resource.category === activeCategory)
+    : all;
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
@@ -29,17 +35,19 @@ export default async function ResourcesPage(props: PageProps<"/maler">) {
         hvordan de brukes, og last dem ned.
       </p>
 
-      <div className="mt-8 flex flex-wrap gap-2 text-sm">
-        <FilterLink href="/maler" active={!activeKind} label="Alle" />
-        {RESOURCE_KINDS.map((kind) => (
-          <FilterLink
-            key={kind.value}
-            href={`/maler?type=${kind.value}`}
-            active={activeKind === kind.value}
-            label={kind.plural}
-          />
-        ))}
-      </div>
+      {usedCategories.length > 0 && (
+        <div className="mt-8 flex flex-wrap gap-2 text-sm">
+          <FilterLink href="/maler" active={!activeCategory} label="Alle" />
+          {usedCategories.map((category) => (
+            <FilterLink
+              key={category}
+              href={`/maler?kategori=${encodeURIComponent(category)}`}
+              active={activeCategory === category}
+              label={category}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="mt-10">
         {resources.length === 0 ? (

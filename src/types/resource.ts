@@ -1,14 +1,4 @@
-export type ResourceKind = "mal" | "verktoy";
 export type ResourceStatus = "draft" | "published";
-
-export const RESOURCE_KINDS: { value: ResourceKind; label: string; plural: string }[] = [
-  { value: "mal", label: "Mal", plural: "Maler" },
-  { value: "verktoy", label: "Verktøy", plural: "Verktøy" },
-];
-
-export function resourceKindLabel(kind: ResourceKind): string {
-  return RESOURCE_KINDS.find((item) => item.value === kind)?.label ?? "Mal";
-}
 
 export interface ResourceFile {
   name: string;
@@ -24,7 +14,8 @@ export interface Resource {
   title: string;
   excerpt: string | null;
   content: string;
-  kind: ResourceKind;
+  // En av kategoriene i src/lib/categories.ts, eller null.
+  category: string | null;
   cover_image_url: string | null;
   best_for: string[];
   key_features: string[];

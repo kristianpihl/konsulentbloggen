@@ -4,7 +4,8 @@ import { useActionState, useState } from "react";
 import { CoverImageField } from "@/components/admin/cover-image-field";
 import { FileAttachmentsField } from "@/components/admin/file-attachments-field";
 import { slugify } from "@/lib/slugify";
-import { MAX_RESOURCE_CONTENT_LENGTH, RESOURCE_KINDS } from "@/types/resource";
+import { CATEGORIES } from "@/lib/categories";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "@/types/resource";
 import type { Resource } from "@/types/resource";
 import type { ResourceFormState } from "@/app/admin/maler/actions";
 
@@ -39,21 +40,23 @@ export function ResourceForm({
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
-          <label htmlFor="kind" className="block text-sm font-medium">
-            Type
+          <label htmlFor="category" className="block text-sm font-medium">
+            Kategori
           </label>
           <select
-            id="kind"
-            name="kind"
-            defaultValue={resource?.kind ?? "mal"}
+            id="category"
+            name="category"
+            defaultValue={resource?.category ?? ""}
             className="mt-1 w-full rounded-md border border-black/15 px-3 py-2 text-sm outline-none focus:border-black/40"
           >
-            {RESOURCE_KINDS.map((kind) => (
-              <option key={kind.value} value={kind.value}>
-                {kind.label}
+            <option value="">Ingen kategori</option>
+            {CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
               </option>
             ))}
           </select>
+          <p className="mt-1 text-xs text-black/50">Brukes som filter på /maler.</p>
         </div>
 
         <div>

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ResourceDetail } from "@/components/resource-detail";
-import { getPublishedResourceBySlug } from "@/lib/resources";
+import {
+  getPostsForResource,
+  getPublishedResourceBySlug,
+} from "@/lib/resources";
 
 export const revalidate = 0;
 
@@ -28,5 +31,7 @@ export default async function ResourcePage(props: PageProps<"/maler/[slug]">) {
 
   if (!resource) notFound();
 
-  return <ResourceDetail resource={resource} />;
+  const relatedPosts = await getPostsForResource(resource.id);
+
+  return <ResourceDetail resource={resource} relatedPosts={relatedPosts} />;
 }

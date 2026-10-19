@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { ArticleActions } from "@/components/article-actions";
+import { RelatedResourceCard } from "@/components/resource-card";
 import { formatDate } from "@/lib/slugify";
 import { getPublishedPostBySlug } from "@/lib/posts";
+import { getPublishedResourceById } from "@/lib/resources";
 import { siteConfig } from "@/lib/site-config";
 
 export const revalidate = 0;
@@ -30,6 +32,10 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
   const post = await getPublishedPostBySlug(slug);
 
   if (!post) notFound();
+
+  const relatedResource = post.resource_id
+    ? await getPublishedResourceById(post.resource_id)
+    : null;
 
   // Vis "Oppdatert" kun hvis innlegget faktisk er endret en god stund
   // etter at det ble opprettet (ikke bare avrundingsstøy fra lagring).
@@ -104,6 +110,8 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
       <div className="prose prose-neutral mt-8 max-w-none prose-headings:font-semibold prose-a:text-black prose-a:underline">
         <ReactMarkdown>{post.content}</ReactMarkdown>
       </div>
+
+      {relatedResource && <RelatedResourceCard resource={relatedResource} />}
     </article>
   );
 }

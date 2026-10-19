@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { PostForm } from "@/components/admin/post-form";
 import { updatePost } from "@/app/admin/actions";
 import { getPostById } from "@/lib/posts";
+import { getResourceLinkOptions } from "@/lib/resources";
 
 export const revalidate = 0;
 
@@ -12,12 +13,18 @@ export default async function EditPostPage(props: PageProps<"/admin/[id]/edit">)
   if (!post) notFound();
 
   const action = updatePost.bind(null, id);
+  const resourceOptions = await getResourceLinkOptions();
 
   return (
     <div>
       <h1 className="text-xl font-semibold">Rediger innlegg</h1>
       <div className="mt-8">
-        <PostForm action={action} post={post} submitLabel="Lagre endringer" />
+        <PostForm
+          action={action}
+          post={post}
+          submitLabel="Lagre endringer"
+          resourceOptions={resourceOptions}
+        />
       </div>
     </div>
   );

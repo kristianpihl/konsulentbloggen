@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { AdminItemRow } from "@/components/admin/admin-item-row";
 import { getAllResourcesForAdmin } from "@/lib/resources";
-import { resourceKindLabel } from "@/types/resource";
 import { deleteResource } from "./actions";
 
 export const revalidate = 0;
@@ -44,7 +43,7 @@ export default async function AdminResourcesDashboard() {
             deleteConfirmMessage="Slette denne? Filene slettes også, og det kan ikke angres."
             meta={
               <>
-                {resourceKindLabel(resource.kind)} ·{" "}
+                {resource.category ?? "Uten kategori"} ·{" "}
                 {resource.status === "published" ? "Publisert" : "Utkast"} ·{" "}
                 {resource.files.length}{" "}
                 {resource.files.length === 1 ? "fil" : "filer"}

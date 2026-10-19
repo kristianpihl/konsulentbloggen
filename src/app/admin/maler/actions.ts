@@ -9,11 +9,8 @@ import {
   MAX_RESOURCE_FILES,
   RESOURCE_BUCKET,
 } from "@/types/resource";
-import type {
-  ResourceFile,
-  ResourceKind,
-  ResourceStatus,
-} from "@/types/resource";
+import { CATEGORIES } from "@/lib/categories";
+import type { ResourceFile, ResourceStatus } from "@/types/resource";
 
 export type ResourceFormState = { error: string; success?: boolean } | null;
 
@@ -22,7 +19,7 @@ interface ResourceInput {
   slug: string;
   excerpt: string;
   content: string;
-  kind: ResourceKind;
+  category: string;
   cover_image_url: string;
   best_for: string[];
   key_features: string[];
@@ -66,7 +63,7 @@ function parseLines(raw: string): string[] {
 function parseInput(formData: FormData): ResourceInput {
   const title = String(formData.get("title") ?? "").trim();
   const slugRaw = String(formData.get("slug") ?? "").trim();
-  const kindRaw = String(formData.get("kind") ?? "mal");
+  const categoryRaw = String(formData.get("category") ?? "").trim();
   const statusRaw = String(formData.get("status") ?? "draft");
 
   return {
@@ -74,7 +71,9 @@ function parseInput(formData: FormData): ResourceInput {
     slug: slugify(slugRaw || title),
     excerpt: String(formData.get("excerpt") ?? "").trim(),
     content: String(formData.get("content") ?? ""),
-    kind: kindRaw === "verktoy" ? "verktoy" : "mal",
+    category: (CATEGORIES as readonly string[]).includes(categoryRaw)
+      ? categoryRaw
+      : "",
     cover_image_url: String(formData.get("cover_image_url") ?? "").trim(),
     best_for: parseLines(String(formData.get("best_for") ?? "")),
     key_features: parseLines(String(formData.get("key_features") ?? "")),
@@ -100,8 +99,8 @@ function errorMessage(error: { code?: string; message: string }): string {
   if (error.code === "42P01") {
     return "Tabellen finnes ikke ennå. Kjør migrasjon 011_resources.sql i Supabase.";
   }
-  if (/best_for|key_features/.test(error.message)) {
-    return "Kolonnene mangler. Kjør migrasjon 012_resources_extras.sql i Supabase.";
+  if (/best_for|key_features|category/.test(error.message)) {
+    return "Kolonner mangler. Kjør migrasjon 012 og 013 i Supabase.";
   }
   return error.message;
 }
@@ -131,6 +130,7 @@ export async function createResource(
     .insert({
       ...input,
       excerpt: input.excerpt || null,
+      category: input.category || null,
       cover_image_url: input.cover_image_url || null,
       published_at: input.status === "published" ? new Date().toISOString() : null,
     })
@@ -175,6 +175,7 @@ export async function updateResource(
     .update({
       ...input,
       excerpt: input.excerpt || null,
+      category: input.category || null,
       cover_image_url: input.cover_image_url || null,
       published_at,
       updated_at: new Date().toISOString(),

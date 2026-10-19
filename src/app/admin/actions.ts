@@ -77,6 +77,10 @@ function parsePostInput(formData: FormData): PostInput {
 
   const slug = slugify(slugRaw || title);
 
+  // Feltet «Relatert mal eller verktøy» finnes bare i skjemaet når kolonnen
+  // finnes. Er det utelatt, rører vi ikke resource_id.
+  const resourceRaw = formData.get("resource_id");
+
   return {
     title,
     slug,
@@ -85,6 +89,7 @@ function parsePostInput(formData: FormData): PostInput {
     cover_image_url: coverImageUrl,
     tags,
     status,
+    ...(resourceRaw === null ? {} : { resource_id: String(resourceRaw) || null }),
   };
 }
 
