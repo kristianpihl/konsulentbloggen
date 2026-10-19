@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   ChartIcon,
   LogoutIcon,
+  MailIcon,
   PagesIcon,
   PostsIcon,
   SparklesIcon,
@@ -16,6 +17,7 @@ const NAV_ITEMS = [
   { href: "/admin/bygger", label: "Innholdsbygger", icon: SparklesIcon },
   { href: "/admin/maler", label: "Maler og verktøy", icon: ToolboxIcon },
   { href: "/admin/sider", label: "Sider", icon: PagesIcon },
+  { href: "/admin/nyhetsbrev", label: "Nyhetsbrev", icon: MailIcon },
   { href: "/admin/analytics", label: "Statistikk", icon: ChartIcon },
 ] as const;
 
